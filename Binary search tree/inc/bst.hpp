@@ -67,6 +67,8 @@ public:
     T pull(BstIterator<T>& a_it);
     void pull(T a_data);
 
+    size_t size();
+
     BstIterator<T> forEach(Modes a_mode, actionFunction a_action = printNodeData<T>, void* a_contex = nullptr);
     BstIterator<T> findFirst(actionFunction a_action = findNodeByData<T>, void* a_contex = nullptr);
 
@@ -76,6 +78,9 @@ public:
 private:
     BstIterator<T> begineRec (Node<T>* a_node);
     BstIterator<T> pushRec(Node<T>* a_node, T a_data);
+    T removeOneChild(BstIterator<T> &a_it);
+    T removeTwoChilds(BstIterator<T>& a_it);
+    T removeLeaf(BstIterator<T> &a_it, BstIterator<T> a_childIt);
     BstIterator<T> forEachPreOrder(actionFunction& a_action, Node<T>* a_root, void* a_contex);
     BstIterator<T> forEachInOrder(actionFunction& a_action, Node<T>* a_root, void* a_contex);
     BstIterator<T> forEachPostOrder(actionFunction& a_action, Node<T>* a_root, void* a_contex);
@@ -84,6 +89,7 @@ private:
 private:
     Node<T>* m_root;
     compareFunction m_compare;
+    size_t m_size;
 };
 
 

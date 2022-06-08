@@ -38,65 +38,11 @@ void setFather(BstIterator<T> &a_it, BstIterator<T> &a_childIt)
 }
 
 template <typename T>
-T removeLeaf(BstIterator<T> &a_it, BstIterator<T> a_childIt)
-{
-    T data = a_it.data();
-
-    if (a_it.father().right() == a_it)
-    {
-        a_it.father().setRight(a_childIt);
-        setFather(a_it, a_childIt);
-    }
-
-    if (a_it.father().left() == a_it)
-    {
-        a_it.father().setLeft(a_childIt);
-        setFather(a_it, a_childIt);
-    }
-
-    a_it.distroy();
-    return data;
-}
-
-template <typename T>
 void swapIterators(BstIterator<T> &a_first, BstIterator<T> &a_second)
 {
     T temp = a_first.data();
     a_first.data() = a_second.data();
     a_second.data() = temp;
-}
-
-template <typename T>
-T removeOneChild(BstIterator<T> &a_it)
-{
-    if (!a_it.left().isNull())
-    {
-        return removeLeaf(a_it, a_it.left());
-    }
-    if (!a_it.right().isNull())
-    {
-        return removeLeaf(a_it, a_it.right());
-    }
-    return 0;
-}
-
-template <typename T>
-T removeTwoChilds(BstIterator<T>& a_it)
-{
-    BstIterator<T> prev = a_it;
-    --prev;
-    swapIterators(prev, a_it);
-
-    if (prev.left().isNull() && prev.right().isNull())
-    {
-        BstIterator<T> nullIt;
-        return removeLeaf(prev, nullIt);
-    }
-
-    if (!prev.left().isNull() && !prev.right().isNull())
-        return removeTwoChilds(prev);
-
-    return removeOneChild(prev);
 }
 
 
@@ -106,6 +52,7 @@ template <typename T>
 Bst<T>::Bst(compareFunction a_compare)
 : m_root(new Node<T>)
 , m_compare(a_compare)
+, m_size(0)
 {
     m_root->setFather(m_root);
 }
@@ -124,6 +71,7 @@ template <typename T>
 Bst<T>::Bst(Bst<T>& a_other)
 : m_root(new Node<T>)
 , m_compare(a_other.m_compare)
+, m_size(a_other.m_size)
 {
     m_root->setFather(m_root);
     a_other.forEach(BY_LEVELS, impl::copyByLevels<T>, this);
@@ -133,6 +81,7 @@ template <typename T>
 Bst<T>::Bst(Bst<T>&& a_other)
 : m_root(a_other.m_root)
 , m_compare(a_other.m_compare)
+, m_size(a_other.m_size)
 {
     a_other.m_root = nullptr;
 }
@@ -145,6 +94,7 @@ Bst<T>& Bst<T>::operator=(Bst<T>& a_other)
         m_root = new Node<T>;
         m_root->setFather(m_root);
         m_compare = a_other.m_compare;
+        m_size = a_other.m_size;
         a_other.forEach(BY_LEVELS, impl::copyByLevels<T>, this);
     }
     return *this;
@@ -157,6 +107,7 @@ Bst<T>& Bst<T>::operator=(Bst<T>&& a_other)
     {
         m_root = a_other.m_root;
         m_compare = a_other.m_compare;
+        m_size = a_other.m_size;
         a_other.m_root = nullptr;
     }
     return *this;
@@ -189,11 +140,18 @@ BstIterator<T> Bst<T>::end()
 }
 
 template <typename T>
+size_t Bst<T>::size()
+{
+    return m_size;
+}
+
+template <typename T>
 BstIterator<T> Bst<T>::push(T a_data)
 {
     if (m_root->left() == nullptr)
     {
         m_root->setLeft(new Node(a_data, m_root));
+        ++m_size;
         return BstIterator(m_root->left());
     }
 
@@ -201,6 +159,7 @@ BstIterator<T> Bst<T>::push(T a_data)
     if (returnIt.isNull())
         return end();
 
+    ++m_size;
     return returnIt;
 }
 
@@ -233,12 +192,12 @@ T Bst<T>::pull(BstIterator<T>& a_it)
 {
     BstIterator<T> nallIt;
     if (a_it.left().isNull() && a_it.right().isNull())
-        return impl::removeLeaf(a_it, nallIt);
+        return removeLeaf(a_it, nallIt);
 
     if (!a_it.left().isNull() && !a_it.right().isNull())
-        return impl::removeTwoChilds(a_it);
+        return removeTwoChilds(a_it);
 
-    return impl::removeOneChild(a_it);
+    return removeOneChild(a_it);
 }
 
 template <typename T>
@@ -246,7 +205,67 @@ void Bst<T>::pull(T a_data)
 {
     T data = a_data;
     BstIterator<T> findIt = findFirst(findNodeByData<T>, (void*)&data);
-    pull(findIt);
+    if(findIt != end())
+        pull(findIt);
+}
+
+template <typename T>
+T Bst<T>::removeLeaf(BstIterator<T> &a_it, BstIterator<T> a_childIt)
+{
+    T data = a_it.data();
+
+    if (a_it.father().right() == a_it)
+    {
+        a_it.father().setRight(a_childIt);
+        impl::setFather(a_it, a_childIt);
+        a_it.distroy();
+        --m_size;
+        return data;
+    }
+
+    if (a_it.father().left() == a_it)
+    {
+        a_it.father().setLeft(a_childIt);
+        impl::setFather(a_it, a_childIt);
+        a_it.distroy();
+        --m_size;
+        return data;
+    }
+
+    return 0;
+}
+
+template <typename T>
+T Bst<T>::removeOneChild(BstIterator<T> &a_it)
+{
+    if (!a_it.left().isNull())
+    {
+        return removeLeaf(a_it, a_it.left());
+    }
+    if (!a_it.right().isNull())
+    {
+        return removeLeaf(a_it, a_it.right());
+    }
+    return 0;
+}
+
+template <typename T>
+T Bst<T>::removeTwoChilds(BstIterator<T>& a_it)
+{
+    BstIterator<T> prev = a_it;
+    --prev;
+    impl::swapIterators(prev, a_it);
+
+    if (prev.left().isNull() && prev.right().isNull())
+    {
+        BstIterator<T> nullIt;
+        return removeLeaf(prev, nullIt);
+    }
+
+    if (!prev.left().isNull() && !prev.right().isNull())
+        return removeTwoChilds(prev);
+
+    return removeOneChild(prev);
 }
 
 template <typename T>

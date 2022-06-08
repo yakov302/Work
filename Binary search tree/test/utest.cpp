@@ -164,6 +164,8 @@ BEGIN_TEST(pull_by_iterator_and_value)
 	tree.push(32);
 	tree.push(75);
 
+	ASSERT_EQUAL(tree.size(), 12);
+
 	std::cout << std::endl << "       ***pull 4 by iterator***" << std::endl;
 	tree.pull(four);
 	tree.forEach(IN_ORDER);
@@ -183,6 +185,8 @@ BEGIN_TEST(pull_by_iterator_and_value)
 	tree.pull(3);
 	tree.forEach(IN_ORDER);
 	std::cout << std::endl;
+
+	ASSERT_EQUAL(tree.size(), 8);
 
 	std::cout << std::endl;
 	ASSERT_PASS();
@@ -214,15 +218,21 @@ BEGIN_TEST(find_first)
 
 END_TEST
 
-BEGIN_TEST(push)
+BEGIN_TEST(push_and_pull)
 
 	Bst<int> tree;
 
 	BstIterator<int> pushIt = tree.push(4);
 	ASSERT_EQUAL(*pushIt, 4);
 
-	pushIt = tree.push(4);
-	ASSERT_EQUAL(pushIt == tree.end(), true);
+	BstIterator<int> push2It = tree.push(4);
+	ASSERT_EQUAL(push2It == tree.end(), true);
+
+	int n = tree.pull(pushIt);
+	ASSERT_EQUAL(n, 4);
+
+	n = tree.pull(pushIt);
+	ASSERT_EQUAL(n, 0);
 
 	std::cout << std::endl;
 
@@ -380,6 +390,8 @@ BEGIN_TEST(pull_by_iterator_and_value_person)
 	BstIterator<Person> fifteen = tree.push(Person(6, "david"));
 	tree.push(Person(11, "mosh"));
 
+	ASSERT_EQUAL(tree.size(), 8);
+
 	std::cout << std::endl << "       ***pull 4 by iterator***" << std::endl;
 	tree.pull(four);
 	tree.forEach(IN_ORDER, printPersonData);
@@ -394,6 +406,8 @@ BEGIN_TEST(pull_by_iterator_and_value_person)
 	tree.pull(*it);
 	tree.forEach(IN_ORDER, printPersonData);
 	std::cout << std::endl;
+
+	ASSERT_EQUAL(tree.size(), 5);
 
 	std::cout << std::endl;
 	ASSERT_PASS();
@@ -421,15 +435,21 @@ BEGIN_TEST(find_first_person)
 
 END_TEST
 
-BEGIN_TEST(push_person)
+BEGIN_TEST(push_and_pull_person)
 
 	Bst<Person> tree;
 
 	BstIterator<Person> pushIt = tree.push(Person(4, "hila"));
 	ASSERT_EQUAL(pushIt->id(), 4);
 
-	pushIt = tree.push(Person(4, "hila"));
-	ASSERT_EQUAL(pushIt == tree.end(), true);
+	BstIterator<Person> push2It = tree.push(Person(4, "hila"));
+	ASSERT_EQUAL(push2It == tree.end(), true);
+
+	Person p = tree.pull(pushIt);
+	ASSERT_EQUAL(p.id(), 4);
+
+	p = tree.pull(pushIt);
+	ASSERT_EQUAL(p.id(), 0);
 
 	std::cout << std::endl;
 
@@ -442,13 +462,13 @@ BEGIN_SUITE(TEST)
 	TEST(pull_by_iterator_and_value)
 	TEST(find_first)
 	TEST(print_by_mode)
-	TEST(push)
+	TEST(push_and_pull)
 
 	TEST(copr_op_and_ctor_person)
 	TEST(begine_and_end_iterators_person)
 	TEST(pull_by_iterator_and_value_person)
 	TEST(find_first_person)
 	TEST(print_by_mode_person)
-	TEST(push_person)
+	TEST(push_and_pull_person)
 
 END_SUITE
