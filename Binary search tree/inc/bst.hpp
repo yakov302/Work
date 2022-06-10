@@ -70,7 +70,7 @@ public:
     size_t size();
 
     BstIterator<T> forEach(Modes a_mode, actionFunction a_action = printNodeData<T>, void* a_context = nullptr);
-    BstIterator<T> findFirst(actionFunction a_action = findNodeByData<T>, void* a_contex = nullptr);
+    BstIterator<T> findFirst(actionFunction a_action = findNodeByData<T>, void* a_context = nullptr);
 
     bool operator==(Bst<T>& a_other);
     bool operator!=(Bst<T>& a_other);
