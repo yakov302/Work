@@ -214,6 +214,16 @@ BEGIN_TEST(find_first)
 	std::cout << *find << std::endl;
 	ASSERT_EQUAL(*find, 4);
 
+	int num = 11;
+	find = tree.findFirst(findNodeByData<int>, &num);
+	ASSERT_EQUAL(find != tree.end(), true);
+
+	num = 18;
+	find = tree.findFirst(findNodeByData<int>, &num);
+	ASSERT_EQUAL(find == tree.end(), true);
+
+
+
 	std::cout << std::endl;
 
 END_TEST

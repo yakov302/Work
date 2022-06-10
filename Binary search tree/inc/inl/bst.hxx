@@ -293,21 +293,21 @@ template <typename T>
 BstIterator<T> Bst<T>::forEachInOrder(actionFunction& a_action, Node<T>* a_root, void* a_contex)
 {
     BstIterator<T> returnIt;
-
+    
     if(a_root == nullptr)
 	    return end();
+
+		returnIt = forEachInOrder(a_action, a_root->left(), a_contex); 
+        if(returnIt != end())
+            return returnIt;
 	
-    returnIt = forEachInOrder(a_action, a_root->left(), a_contex); 
-    if(returnIt != end())
-        return returnIt;
-		
-	if(!a_action(a_root, a_contex))
-        return BstIterator<T>(a_root);
+        if(!a_action(a_root, a_contex))
+            return BstIterator<T>(a_root);
 
-    returnIt = forEachInOrder(a_action, a_root->right(), a_contex);
-    if (returnIt != end())
-        return returnIt;
-
+		returnIt = forEachInOrder(a_action, a_root->right(), a_contex);
+        if (returnIt != end())
+            return returnIt;
+	
 	return end();
 }
 
@@ -319,17 +319,17 @@ BstIterator<T> Bst<T>::forEachPreOrder(actionFunction& a_action, Node<T>* a_root
     if(a_root == nullptr)
 	    return end();
 	
-	if(!a_action(a_root, a_contex))
-        return BstIterator<T>(a_root);
+        if(!a_action(a_root, a_contex))
+            return BstIterator<T>(a_root);
 	
-    returnIt = forEachPreOrder(a_action, a_root->left(), a_contex);
-    if(returnIt != end())
-        return returnIt;
- 
-    returnIt = forEachPreOrder(a_action, a_root->right(), a_contex);
-    if(returnIt != end())
-        return returnIt;
-  
+		returnIt = forEachPreOrder(a_action, a_root->left(), a_contex);
+        if(returnIt != end())
+            return returnIt;
+
+		returnIt = forEachPreOrder(a_action, a_root->right(), a_contex);
+        if(returnIt != end())
+            return returnIt;
+    
     return end();
 }
 
@@ -339,18 +339,18 @@ BstIterator<T> Bst<T>::forEachPostOrder(actionFunction& a_action, Node<T>* a_roo
     BstIterator<T> returnIt;
     
     if(a_root == nullptr)
-        return end();
+		return end();
 
-    returnIt = forEachPostOrder(a_action, a_root->left(), a_contex);
-    if(returnIt != end())
-        return returnIt;
-
-	returnIt = forEachPostOrder(a_action, a_root->right(), a_contex);
-    if(returnIt != end())
+        returnIt = forEachPostOrder(a_action, a_root->left(), a_contex);
+        if(returnIt != end())
             return returnIt;
 
-    if(!a_action(a_root, a_contex))
-        return BstIterator<T>(a_root);
+        returnIt = forEachPostOrder(a_action, a_root->right(), a_contex);
+        if(returnIt != end())
+                return returnIt;
+
+        if(!a_action(a_root, a_contex))
+            return BstIterator<T>(a_root);
 
     return end();
 }
