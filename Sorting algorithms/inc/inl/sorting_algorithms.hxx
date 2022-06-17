@@ -540,4 +540,5 @@ size_t findByBinarySearch(std::vector<T>& a_vector, T a_elemnt, compareFunction<
     return size;
 }
 
+
 } // sort namespace
