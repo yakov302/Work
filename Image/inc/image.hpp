@@ -50,6 +50,12 @@ void changeColorScale(Image<T>& a_imageObject, T a_scale = 4);
 template<typename T> 
 void reducePixels(Image<T>& a_imageObject, int a_by = 2);
 
+template<typename T> 
+Image<T> blur(Image<T>& a_imageObject);
+
+template<typename T> 
+Image<T> sharp(Image<T>& a_imageObject);
+
 
 } // namespace image
 

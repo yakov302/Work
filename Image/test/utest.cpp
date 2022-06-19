@@ -157,7 +157,49 @@ BEGIN_TEST(reduce_pixels)
 
 END_TEST
 
+BEGIN_TEST(blur)
 
+	// *** Black and white imags ***
+
+	std::ifstream cat("../data/cat.pgm");
+	image::Image<uint_fast16_t> image = image::read<uint_fast16_t>(cat);
+	image::Image<uint_fast16_t> blurImage = blur(image);
+	std::ofstream blurCat("../data/blurCat.pgm");
+	image::save (blurImage, blurCat);
+
+	// *** Colored imags ***
+
+	std::ifstream coloredCat("../data/cat.ppm");
+	image::Image<uint_fast16_t> coloredImage = image::read<uint_fast16_t>(coloredCat);
+	image::Image<uint_fast16_t> blurColoredImage = blur(coloredImage);
+	std::ofstream blurColoredCat("../data/blurCat.ppm");
+	image::save (blurColoredImage, blurColoredCat);
+
+	ASSERT_PASS();
+
+END_TEST
+
+BEGIN_TEST(sharp)
+
+	// *** Black and white imags ***
+
+	std::ifstream cat("../data/cat.pgm");
+	image::Image<uint_fast16_t> image = image::read<uint_fast16_t>(cat);
+	image::Image<uint_fast16_t> sharpImage = sharp(image);
+	std::ofstream sharpCat("../data/sharpCat.pgm");
+	image::save (sharpImage, sharpCat);
+
+	// *** Colored imags ***
+
+	std::ifstream coloredCat("../data/cat.ppm");
+	image::Image<uint_fast16_t> coloredImage = image::read<uint_fast16_t>(coloredCat);
+	image::Image<uint_fast16_t> sharpColoredImage = sharp(coloredImage);
+	std::ofstream sharpColoredCat("../data/sharpCat.ppm");
+	image::save (sharpColoredImage, sharpColoredCat);
+
+	ASSERT_PASS();
+
+END_TEST
 
 BEGIN_SUITE(TEST)
 
@@ -166,5 +208,7 @@ BEGIN_SUITE(TEST)
 	TEST(brighten)
 	TEST(change_color_scale)
 	TEST(reduce_pixels)
+	TEST(blur)
+	TEST(sharp)
 
 END_SUITE

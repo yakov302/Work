@@ -137,6 +137,68 @@ void reduceColoredPixels(Image<T>& a_imageObject, size_t a_rows, size_t a_column
     delete[] pixelsArray;
 }
 
+template<typename T> 
+void setPixel(Image<T>& a_imageObject, Image<T>& newImage, size_t a_rows, size_t a_columns, float*& a_multipliers)
+{
+    T setPixel = a_imageObject.getPixel(a_rows-1, a_columns -1)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows+1, a_columns +1)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows+1, a_columns -1)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows-1, a_columns +1)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows-1, a_columns)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows+1, a_columns)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows, a_columns-1)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows, a_columns+1)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows, a_columns)*a_multipliers[2];
+    newImage.setPixel(a_rows, a_columns, setPixel);
+}
+
+template<typename T> 
+void setSingelColorPixel(Image<T>& a_imageObject, Image<T>& newImage, size_t a_rows, size_t a_columns, float*& a_multipliers)
+{
+    T setPixel = a_imageObject.getPixel(a_rows-1, a_columns -3)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows+1, a_columns +3)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows+1, a_columns -3)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows-1, a_columns +3)*a_multipliers[0];
+    setPixel += a_imageObject.getPixel(a_rows-1, a_columns)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows+1, a_columns)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows, a_columns-3)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows, a_columns+3)*a_multipliers[1];
+    setPixel += a_imageObject.getPixel(a_rows, a_columns)*a_multipliers[2];
+    newImage.setPixel(a_rows, a_columns, setPixel);
+}
+
+template<typename T> 
+void setColoredPixel(Image<T>& a_imageObject, Image<T>& newImage, size_t a_rows, size_t a_columns, float*& a_multipliers)
+{
+    setSingelColorPixel(a_imageObject, newImage, a_rows, a_columns, a_multipliers);
+    setSingelColorPixel(a_imageObject, newImage, a_rows, a_columns + 1, a_multipliers);
+    setSingelColorPixel(a_imageObject, newImage, a_rows, a_columns + 2, a_multipliers);
+}
+
+template<typename T> 
+void setBlackAndwhite(Image<T>& a_imageObject, Image<T>& newImage, size_t a_rows, size_t a_columns, float a_multipliers[3])
+{
+    for(size_t i = 1 ; i < a_rows; ++i)
+    {
+        for(size_t j = 1 ; j < a_columns; ++j)
+        {
+            setPixel(a_imageObject, newImage, i, j, a_multipliers);
+        }
+    }
+}
+
+template<typename T> 
+void setColored(Image<T>& a_imageObject, Image<T>& newImage, size_t a_rows, size_t a_columns, float a_multipliers[3])
+{
+    for(size_t i = 1 ; i < a_rows; ++i)
+    {
+        for(size_t j = 3 ; j < a_columns; j+=2)
+        {
+            setColoredPixel(a_imageObject, newImage, i, j, a_multipliers);
+        }
+    }
+}
+
 
 }// impl namespace
 
@@ -271,7 +333,7 @@ Image<T> read (std::ifstream& a_imageFile)
     size_t rows, columns;
     T colorScale;
     a_imageFile >> format >> rows >> columns >> colorScale;
-    Image<T> image(rows, columns, format, colorScale);
+    Image<T> imageObject(rows, columns, format, colorScale);
 
     impl::setColumnSize(format, columns);
 
@@ -282,11 +344,11 @@ Image<T> read (std::ifstream& a_imageFile)
         for(size_t i = 0; i < columns; ++i)
         {
             a_imageFile >> pixel;
-            image.setPixel(rows, i, pixel);
+            imageObject.setPixel(rows, i, pixel);
         }
         ++rows;
     }
-    return image;
+    return imageObject;
 }
 
 template<typename T>  
@@ -355,6 +417,40 @@ void reducePixels(Image<T>& a_imageObject, int a_by)
     else
         impl::reduceColoredPixels(a_imageObject, rows -(a_by-1), columns -3*(a_by) -1, a_by);
 
+}
+
+template<typename T> 
+Image<T> blur(Image<T>& a_imageObject)
+{
+    const size_t rows = a_imageObject.rows();
+    size_t columns = a_imageObject.columns();
+    impl::setColumnSize(a_imageObject.format(), columns);
+    Image<T> blurImage = a_imageObject;
+    float multipliers[3] = {0.0625, 0.125, 0.25};
+
+    if(a_imageObject.format() == "P2")
+        impl::setBlackAndwhite(a_imageObject, blurImage, rows - 1, columns - 1, multipliers);
+    else
+        impl::setColored(a_imageObject, blurImage, rows - 1, columns - 5, multipliers);
+
+    return blurImage;
+}
+
+template<typename T> 
+Image<T> sharp(Image<T>& a_imageObject)
+{
+    const size_t rows = a_imageObject.rows();
+    size_t columns = a_imageObject.columns();
+    impl::setColumnSize(a_imageObject.format(), columns);
+    Image<T> sharpImage = a_imageObject;
+    float multipliers[3] = {0 , -1, 5};
+
+    if(a_imageObject.format() == "P2")
+        impl::setBlackAndwhite(a_imageObject, sharpImage, rows - 1, columns - 1, multipliers);
+    else
+        impl::setColored(a_imageObject, sharpImage, rows - 1, columns - 5, multipliers);
+
+    return sharpImage;
 }
 
 
