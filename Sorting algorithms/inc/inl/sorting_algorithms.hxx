@@ -229,11 +229,11 @@ void quickSortRec(std::vector<T>& a_vector, size_t a_first, size_t a_last, compa
         return;
 
     T& pivot = findPivot(a_vector, a_first, a_last, a_compare);
-    size_t pivotInsex = partition(a_vector, a_first,  a_last, pivot, a_compare);
+    size_t pivotIndex = partition(a_vector, a_first,  a_last, pivot, a_compare);
 
-    if(pivotInsex  > 1)
-        quickSortRec(a_vector, a_first, pivotInsex - 1, a_compare);
-    quickSortRec(a_vector, pivotInsex + 1, a_last, a_compare);
+    if(pivotIndex  > 1)
+        quickSortRec(a_vector, a_first, pivotIndex - 1, a_compare);
+    quickSortRec(a_vector, pivotIndex + 1, a_last, a_compare);
 }
 
 void findMax(std::vector<int>& a_vector, int& a_max, int const& a_size)
