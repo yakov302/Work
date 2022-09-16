@@ -21,7 +21,21 @@ typedef struct Args
 
 void args_create(Args* args, int num_of_strings, int num_of_ints, int num_of_float);
 
+char* strings(Args* args);
+
+int* ints(Args* args);
+
+float* floats(Args* args);
+
+int num_of_strings(Args* args);
+
+int num_of_ints(Args* args);
+
+int num_of_floats(Args* args);
+
 void push_string(Args* args, const char* string);
+
+void push_string_by_len(Args* args, const char* string, int str_size);
 
 void push_int(Args* args, int number);
 

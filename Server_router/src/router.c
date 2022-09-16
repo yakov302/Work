@@ -67,8 +67,8 @@ static void fatal_error(Router* router, const char* fail)
 
 static void delete_deleted(Router* router)
 {
-    ListItr it = ListItrBegin(router->m_socket->m_deleted_sockets);
-	ListItr end = ListItrEnd(router->m_socket->m_deleted_sockets);
+    ListItr it = ListItrBegin(deleted_sockets(router->m_socket));
+	ListItr end = ListItrEnd(deleted_sockets(router->m_socket));
     ListItr next;
 
 	while(it != end && ListSize(deleted_sockets(router->m_socket)) != 0)
@@ -86,8 +86,8 @@ static void take_care_exists_clients(Router* router)
 {
 
     ListItr next;
-    ListItr it = ListItrBegin(router->m_socket->m_connected_sockets);
-	ListItr end = ListItrEnd(router->m_socket->m_connected_sockets);
+    ListItr it = ListItrBegin(connected_sockets(router->m_socket));
+	ListItr end = ListItrEnd(connected_sockets(router->m_socket));
 	
 	while((it != end) && (router->m_activity > 0)) 
 	{	
@@ -175,8 +175,8 @@ static void wake_up(Router* router)
     struct sockaddr_in sin;
     memset (&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr =  inet_addr(router->m_socket->m_server_ip);
-	sin.sin_port = htons(router->m_socket->m_server_port);
+	sin.sin_addr.s_addr =  inet_addr(server_ip(router->m_socket));
+	sin.sin_port = htons(server_port(router->m_socket));
 
     if(connect(socket_num, (struct sockaddr*)&sin, sizeof(sin)) < 0)
 		perror("wake_up connect fail: \n");

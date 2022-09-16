@@ -78,8 +78,8 @@ void send_all_clients(Socket* socket, char* buffer, int message_size, Mutex* mut
         return;
 
     ListItr next;
-    ListItr it = ListItrBegin(socket->m_connected_sockets);
-	ListItr end = ListItrEnd(socket->m_connected_sockets);
+    ListItr it = ListItrBegin(connected_sockets(socket));
+	ListItr end = ListItrEnd(connected_sockets(socket));
 
 	while(it != end) 
 	{	

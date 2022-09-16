@@ -64,5 +64,8 @@ void delete_from_deleted_sockets(Socket* socket, ListItr it);
 
 void close_all_clients_sockets(Socket* socket);
 
+char* server_ip(Socket* socket);
+
+int server_port(Socket* socket);
 
 #endif //SOCKET_H

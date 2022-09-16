@@ -64,12 +64,49 @@ void args_create(Args* args, int num_of_strings, int num_of_ints, int num_of_flo
     malloc_floats(&args->m_floats, num_of_float);
 }
 
+char* strings(Args* args)
+{
+    return args->m_strings;
+}
+
+int* ints(Args* args)
+{
+    return args->m_ints;
+}
+
+float* floats(Args* args)
+{
+    return args->m_floats;
+}
+
+int num_of_strings(Args* args)
+{
+    return args->m_num_of_strings;
+}
+
+int num_of_ints(Args* args)
+{
+    return args->m_num_of_ints;
+}
+
+int num_of_floats(Args* args)
+{
+    return args->m_num_of_floats;
+}
+
 void push_string(Args* args, const char* string)
 {
     if(args == NULL || args->m_strings == NULL || string == NULL)
         return;
 
     strcpy(args->m_strings + (args->m_num_of_strings*STRING_SIZE), string);
+    ++args->m_num_of_strings;
+}
+
+void push_string_by_len(Args* args, const char* string, int str_size)
+{
+    strncpy(args->m_strings + (args->m_num_of_strings*STRING_SIZE), string, str_size);
+    *(args->m_strings + (args->m_num_of_strings*STRING_SIZE) + str_size) = '\0';
     ++args->m_num_of_strings;
 }
 

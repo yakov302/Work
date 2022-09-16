@@ -306,3 +306,12 @@ void close_all_clients_sockets(Socket* socket)
     }
 }
 
+char* server_ip(Socket* socket)
+{
+    return socket->m_server_ip;
+}
+
+int server_port(Socket* socket)
+{
+    return socket->m_server_port;
+}

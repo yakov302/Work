@@ -26,43 +26,43 @@ static void decrypt(const char* key, char* buffer, int message_size)
 
 static void pack_strings(char* buffer, Args* arganmats, int* num_of_bytes)
 {
-    int num_of_str = arganmats->m_num_of_strings;
+    int num_of_str = num_of_strings(arganmats);
     *(buffer + *num_of_bytes) = num_of_str;
     ++(*num_of_bytes);
 
     for(int i = 0; i < num_of_str; ++i)
     {
-        int str_size = strlen(arganmats->m_strings + (i*STRING_SIZE));
+        int str_size = strlen(strings(arganmats) + (i*STRING_SIZE));
         *(buffer + *num_of_bytes) = str_size;
         ++(*num_of_bytes);
 
-        strncpy(buffer + *num_of_bytes, arganmats->m_strings + (i*STRING_SIZE), str_size);
+        strncpy(buffer + *num_of_bytes, strings(arganmats) + (i*STRING_SIZE), str_size);
         *num_of_bytes += str_size;
     }
 }
 
 static void pack_ints(char* buffer, Args* arganmats, int* num_of_bytes)
 {
-    int num_of_int = arganmats->m_num_of_ints;
+    int num_of_int = num_of_ints(arganmats);
     *(buffer + *num_of_bytes) = num_of_int;
     ++(*num_of_bytes);
 
     for(int i = 0; i < num_of_int; ++i)
     {
-        *(int*)(buffer + *num_of_bytes) = arganmats->m_ints[i];
+        *(int*)(buffer + *num_of_bytes) = ints(arganmats)[i];
         *num_of_bytes += sizeof(int); 
     }
 }
 
 static void pack_floats(char* buffer, Args* arganmats, int* num_of_bytes)
 {
-    int num_of_floats = arganmats->m_num_of_floats;
-    *(buffer + *num_of_bytes) = num_of_floats;
+    int num_of_float = num_of_floats(arganmats);
+    *(buffer + *num_of_bytes) = num_of_float;
     ++(*num_of_bytes);
 
-    for(int i = 0; i < num_of_floats; ++i)
+    for(int i = 0; i < num_of_float; ++i)
     {
-        *(float*)(buffer + *num_of_bytes) = arganmats->m_floats[i];
+        *(float*)(buffer + *num_of_bytes) = floats(arganmats)[i];
         *num_of_bytes += sizeof(float); 
     }
 }
@@ -85,13 +85,6 @@ int pack(char* buffer, Args* arganmats, Message_type message)
     return num_of_bytes;
 }
 
-static void push_string_internal(Args* args, const char* string, int str_size)
-{
-    strncpy(args->m_strings + (args->m_num_of_strings*STRING_SIZE), string, str_size);
-    *(args->m_strings + (args->m_num_of_strings*STRING_SIZE) + str_size) = '\0';
-    ++args->m_num_of_strings;
-}
-
 static void unpack_strings(char* buffer, Args* arganmats, int num_of_strings, int* num_of_bytes)
 {
     for(int i = 0; i < num_of_strings; ++i)
@@ -99,7 +92,7 @@ static void unpack_strings(char* buffer, Args* arganmats, int num_of_strings, in
         int str_size = *(buffer + *num_of_bytes);
         ++(*num_of_bytes);
 
-        push_string_internal(arganmats, buffer + *num_of_bytes, str_size); 
+        push_string_by_len(arganmats, buffer + *num_of_bytes, str_size); 
         *num_of_bytes += str_size;
     }
 }
