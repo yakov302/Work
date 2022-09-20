@@ -5,8 +5,6 @@
 
 typedef void* ListItr;
 
-typedef int(*Compar)(void*, void*);
-
 ListItr begin(const List* list);
 
 ListItr end(const List* list);
@@ -21,11 +19,11 @@ void* get_data(ListItr itr);
 
 void* set_data(ListItr itr, void* element);
 
-ListItr insert_before(ListItr itr, void* element);
+ListItr insert_before(List* list, ListItr itr, void* element);
 
-void* remove_it(ListItr itr);
+void* remove_it(List* list, ListItr itr);
 
-ListItr find_first(const List* list, Compar is_equal, void* item);
+ListItr find_first(const List* list, Compar is_equal, const void* item);
 
 
 #endif // LIST_ITERATOR_H

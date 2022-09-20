@@ -66,7 +66,7 @@ void* set_data(ListItr itr, void* element)
 	return old_element;
 }
 
-ListItr insert_before(ListItr itr, void* element)
+ListItr insert_before(List* list, ListItr itr, void* element)
 {
 	Node *node = NULL;
 
@@ -77,23 +77,25 @@ ListItr insert_before(ListItr itr, void* element)
 		return NULL;	
 
 	push_node(node, itr);
+	list->m_size++;
 	node->m_data = element;
 	return node;
 }
 
-void* remove_it(ListItr itr)
+void* remove_it(List* list, ListItr itr)
 {
 	void* deleted_node_data;
 
 	if(itr == NULL || itr == next(itr))
 		return NULL;
 
-	deleted_node_data = ((Node*)itr) -> m_data;
-	pop_node(itr);	
+	deleted_node_data = ((Node*)itr)->m_data;
+	pop_node(itr);
+	list->m_size--;	
 	return deleted_node_data;
 }
 
-ListItr find_first(const List* list, Compar is_equal, void* item)
+ListItr find_first(const List* list, Compar is_equal, const void* item)
 {
 	if(list == NULL || is_equal == NULL || item == NULL)
 		return NULL;

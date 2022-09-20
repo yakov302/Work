@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "users_manager.h": "c",
+        "list_iterator.h": "c",
+        "router.h": "c",
+        "string.h": "c"
+    }
+}

@@ -118,26 +118,13 @@ List_return list_pop_tail(List* list, void** item)
 
 size_t list_size(const List* list)
 {
-	size_t count = 0;
-	Node* node;
-
-	if (list == NULL) 
-       	return 0;
-   	
-	node = list->m_head.m_next;
-	while(node != &list->m_tail) 
-	{
-		count++; 
-		node = node->m_next; 
-	} 
-
-	return count;
+	return list->m_size;
 }
 
-int list_is_exists(const List* list, Compar is_equal, void* item)
+int list_is_exists(const List* list, Compar is_equal, const void* item)
 {
 	if(list == NULL || is_equal == NULL || item == NULL)
-		return NOT_INITIALIZED;
+		return LIST_NOT_INITIALIZED;
 
 	Node* next;
 	Node* it = list->m_head.m_next;
@@ -154,7 +141,7 @@ int list_is_exists(const List* list, Compar is_equal, void* item)
 	return NO;
 }
 
-static void push_node(Node *node, Node *next)
+void push_node(Node *node, Node *next)
 {
 	node->m_prev = next->m_prev;
 	node->m_next = next;
@@ -162,7 +149,7 @@ static void push_node(Node *node, Node *next)
 	next->m_prev = node;
 }
 
-static void pop_node(Node* node)
+void pop_node(Node* node)
 {
 	node->m_next->m_prev = node->m_prev;
 	node->m_prev->m_next = node->m_next;

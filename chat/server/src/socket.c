@@ -269,7 +269,7 @@ void delete_client(Socket* socket, ListItr it)
     int client_socket = *(int*)get_data(it);
 	close(client_socket); 
     FD_CLR(client_socket, &socket->m_source_fd);
-    free(remove_it(it));
+    free(remove_it(socket->m_connected_sockets, it));
     push_to_list(socket->m_deleted_sockets, client_socket);
     socket->m_num_of_clients--;
 }
@@ -280,7 +280,7 @@ void move_client_to_front(Socket* socket, ListItr it)
         return;
 
     int client_socket = *(int*)get_data(it);
-    free(remove_it(it));
+    free(remove_it(socket->m_connected_sockets, it));
     push_to_list(socket->m_connected_sockets, client_socket);
 }
 
@@ -289,7 +289,7 @@ void delete_from_deleted_sockets(Socket* socket, ListItr it)
     if(socket == NULL || it == NULL)
         return;
 
-    free(remove_it(it));
+    free(remove_it(socket->m_deleted_sockets, it));
 }
 
 void close_all_clients_sockets(Socket* socket)

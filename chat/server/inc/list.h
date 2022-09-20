@@ -30,12 +30,13 @@ typedef enum List_return{
     LIST_ALLOCATION_ERROR,				
     LIST_NULL_ELEMENT_ERROR,
     LIST_UNDERFLOW_ERROR,
-    NOT_INITIALIZED
+    LIST_NOT_INITIALIZED
+
 } List_return;
 
-typedef int (*Compar)(void*, void*);
+typedef int (*Compar)(const void*, const void*);
 typedef void (*ElementDestroy)(void*);
-typedef void(*PrintItem)(void*);
+typedef void(*PrintItem)(const void*);
 
 static void push_node(Node* node, Node* next);
 static void pop_node(Node* node);
@@ -58,7 +59,7 @@ size_t list_size(const List* _list);
 
 void list_print(List* _list, PrintItem print);
 
-int list_is_exists(const List* list, Compar is_equal, void* item);
+int list_is_exists(const List* list, Compar is_equal, const void* item);
 
 
 #endif// LIST_H
