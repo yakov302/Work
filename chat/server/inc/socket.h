@@ -68,4 +68,5 @@ char* server_ip(Socket* socket);
 
 int server_port(Socket* socket);
 
+
 #endif //SOCKET_H

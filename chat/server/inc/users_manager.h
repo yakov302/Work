@@ -7,14 +7,14 @@
 #define NOT_EQUAL 0
 #define EQUAL 1
 
-typedef struct UserManager
+typedef struct UsersManager
 {
 	HashMap* m_users;
 	int m_magic_number;
 
-}UserManager;
+}UsersManager;
 
-typedef enum UserManager_return
+typedef enum UsersManager_return
 {
 	USER_MANAGER_SUCCESS,
 	USER_MANAGER_ARGS_NOT_INITIALIZED,
@@ -28,20 +28,20 @@ typedef enum UserManager_return
     USER_MANAGER_LEAVE_GROUP_FAIL,
     USER_MANAGER_LOGE_OUT_FAIL
 
-} UserManager_return;
+} UsersManager_return;
 
 
-UserManager* create_users_manager(int capacity);
+UsersManager* create_users_manager(int capacity);
 
-void destroy_users_manager(UserManager* users_manager);
+void destroy_users_manager(UsersManager* users_manager);
 
-UserManager_return user_log_in(UserManager* users_manager, const char* name);
+UsersManager_return user_log_in(UsersManager* users_manager, const char* name);
 
-UserManager_return user_join_group(UserManager* users_manager, char* user_name, char* group_ame);
+UsersManager_return user_join_group(UsersManager* users_manager, char* user_name, char* group_ame);
 
-UserManager_return user_leave_group(UserManager* users_manager, char* _username, char* _groupName);
+UsersManager_return user_leave_group(UsersManager* users_manager, char* _username, char* _groupName);
 
-UserManager_return user_log_out(UserManager* users_manager, char* name);
+UsersManager_return user_log_out(UsersManager* users_manager, char* name);
 
 
 #endif // USERS_MANAGER_H

@@ -24,7 +24,8 @@ typedef struct List
 
 }List;
 
-typedef enum List_return{
+typedef enum List_return
+{
     LIST_SUCCESS,
     LIST_UNINITIALIZED_ERROR,			
     LIST_ALLOCATION_ERROR,				

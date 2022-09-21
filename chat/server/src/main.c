@@ -19,42 +19,55 @@ int main()
     printf("6: %d\n", res);
     printf("ip: %s\n", ip);
 
-    res = new_group(gm, "yakov", ip);
-    printf("1: %d\n", res);
+    // res = new_group(gm, "yakov", ip);
+    // printf("1: %d\n", res);
 
-    res = new_group(gm, "yakov hananael", ip);
-    printf("6: %d\n", res);
-    printf("ip: %s\n", ip);
+    // res = new_group(gm, "yakov hananael", ip);
+    // printf("6: %d\n", res);
+    // printf("ip: %s\n", ip);
 
-    res = join_existing_group (gm, "yakov", ip);
-    printf("6: %d\n", res);
-    printf("224.255.255.1: %s\n", ip);
+    // res = join_existing_group (gm, "yakov", ip);
+    // printf("6: %d\n", res);
+    // printf("224.255.255.1: %s\n", ip);
 
-    res = join_existing_group (gm, "yakov hananael", ip);
-    printf("6: %d\n", res);
-    printf("224.255.255.2: %s\n", ip);
+    // res = join_existing_group (gm, "yakov hananael", ip);
+    // printf("6: %d\n", res);
+    // printf("224.255.255.2: %s\n", ip);
 
-    res = join_existing_group (gm, "yakov  hananael", ip);
-    printf("2: %d\n", res);
+    // res = join_existing_group (gm, "yakov  hananael", ip);
+    // printf("2: %d\n", res);
 
-    res = leave_group (gm, "yakov");
-    printf("6: %d\n", res);
+    // res = leave_group (gm, "yakov");
+    // printf("6: %d\n", res);
 
-    //queue_for_each(gm->m_ips, print_ips, NULL);
+    // //queue_for_each(gm->m_ips, print_ips, NULL);
 
-    res = leave_group (gm, "yakov");
-    printf("7: %d\n", res);
+    // res = leave_group (gm, "yakov");
+    // printf("7: %d\n", res);
 
-    //queue_for_each(gm->m_ips, print_ips, NULL);
+    // //queue_for_each(gm->m_ips, print_ips, NULL);
 
-    res = leave_group (gm, "yakov");
-    printf("2: %d\n", res);
+    // res = leave_group (gm, "yakov");
+    // printf("2: %d\n", res);
 
-    char list [500];
-    give_all_groups_names(gm, list);
-    printf("list:\n%s", list);
+    // char list [500];
+    // give_all_groups_names(gm, list);
+    // printf("list:\n%s", list);
 
-    destroy_groups_manager(gm);
+
+    char groups_names_list[GRUPS_NAMES_LIST_SIZE] = {0};
+    give_all_groups_names(gm, groups_names_list);
+
+    if(num_of_groups(gm) < 1)
+        printf("no groups\n");
+    else
+    {
+        printf("size: %d\n", sizeof(groups_names_list));
+       printf("list:\n%s", groups_names_list);
+    }
+
+            destroy_groups_manager(gm);
+
 
     // SubscribsManager* sm = create_subscribs_manager(200);
     // if(sm == NULL){printf("sm == null\n");}

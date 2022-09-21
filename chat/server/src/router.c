@@ -7,8 +7,11 @@ static void* thread_function(void* arg)
 	return NULL;
 }
 
-Router* router_create()
+Router* router_create(ActionIn* action_in)
 {
+    if(action_in == NULL)
+        return NULL;
+
     Router* router = (Router*)malloc(sizeof(Router));
     if(router == NULL)
         return NULL;
@@ -37,6 +40,7 @@ Router* router_create()
         return NULL;
     }
 
+    router->m_action_in = action_in;
     router->m_stop = OFF;
     router->m_activity = 0;
     router->m_thread_id = run_thread(thread_function, (void*)router);
@@ -100,7 +104,7 @@ static void take_care_exists_clients(Router* router)
             else
             {
                 move_client_to_front(router->m_socket, it);
-                get_buffer(router->m_buffer, client_socket, router->m_mutex);
+                get_buffer(router->m_action_in, router->m_buffer, client_socket, router->m_mutex);
             }
 			
 			--router->m_activity;

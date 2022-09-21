@@ -16,6 +16,7 @@
 typedef struct Router
 {
     Socket* m_socket;
+    ActionIn* m_action_in;
     Mutex* m_mutex;
 
     int m_stop;
@@ -25,7 +26,7 @@ typedef struct Router
 
 }Router;
 
-Router* router_create();
+Router* router_create(ActionIn* action_in);
 
 void router_destroy(Router* router);
 

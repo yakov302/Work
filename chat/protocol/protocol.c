@@ -1,4 +1,5 @@
 #include "protocol.h"
+#include "subscribs_manager.h"
 
 static void encrypt(const char* key, char* buffer, int message_size)
 {

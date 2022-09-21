@@ -12,7 +12,6 @@
 #define IP_SIZE 20
 #define NOT_EQUAL 0
 #define NUM_OF_IPS 250
-
 #define MAGIC_NUMBER 144522
 
 typedef struct GroupsManager
@@ -48,6 +47,8 @@ GroupsManager_return join_existing_group (GroupsManager* groups_manager, char* g
 GroupsManager_return leave_group (GroupsManager* groups_manager, char* group_name);
 
 void give_all_groups_names(GroupsManager* groups_manager, char* groups_names_list);
+
+int num_of_groups(GroupsManager* groups_manager);
 
 
 #endif // GROUPS_MANAGER_H

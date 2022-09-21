@@ -30,12 +30,12 @@ static void destroy_user_element(void* element)
     }
 }
 
-UserManager* create_users_manager(int capacity)
+UsersManager* create_users_manager(int capacity)
 {
     if(capacity < 1)
         return NULL;
 
-	UserManager* users_manager = (UserManager*)malloc(sizeof(UserManager));
+	UsersManager* users_manager = (UsersManager*)malloc(sizeof(UsersManager));
 	if (users_manager == NULL)
 	    return NULL;
 
@@ -50,7 +50,7 @@ UserManager* create_users_manager(int capacity)
 	return users_manager;
 }
 
-void destroy_users_manager(UserManager* user_manager)
+void destroy_users_manager(UsersManager* user_manager)
 {
 	if (user_manager == NULL || user_manager->m_magic_number != MAGIC_NUMBER)
 	    return;
@@ -71,7 +71,7 @@ static char* create_key(const char* name)
     return user_name;
 }
 
-UserManager_return user_log_in(UserManager* users_manager, const char* name)
+UsersManager_return user_log_in(UsersManager* users_manager, const char* name)
 {
 	if (users_manager == NULL || name == NULL)
 		return USER_MANAGER_ARGS_NOT_INITIALIZED;
@@ -99,7 +99,7 @@ UserManager_return user_log_in(UserManager* users_manager, const char* name)
     return USER_MANAGER_SUCCESS;
 }
 
-UserManager_return user_join_group (UserManager* users_manager, char* user_name, char* group_name)
+UsersManager_return user_join_group (UsersManager* users_manager, char* user_name, char* group_name)
 {
 	if (users_manager == NULL || user_name == NULL || group_name == NULL)
 	    return USER_MANAGER_ARGS_NOT_INITIALIZED;
@@ -114,7 +114,7 @@ UserManager_return user_join_group (UserManager* users_manager, char* user_name,
 	return USER_MANAGER_JOIN_GROUP_FAIL;
 }
 	
-UserManager_return user_leave_group (UserManager* users_manager, char* user_name, char* group_name)
+UsersManager_return user_leave_group (UsersManager* users_manager, char* user_name, char* group_name)
 {
 	if (users_manager == NULL || user_name == NULL || group_name == NULL)
 	    return USER_MANAGER_ARGS_NOT_INITIALIZED;
@@ -129,7 +129,7 @@ UserManager_return user_leave_group (UserManager* users_manager, char* user_name
 	return USER_MANAGER_LEAVE_GROUP_FAIL;
 }
 
-UserManager_return user_log_out(UserManager* users_manager, char* user_name)
+UsersManager_return user_log_out(UsersManager* users_manager, char* user_name)
 {
 	if (!hash_map_is_exists(users_manager->m_users, user_name)) {return USER_MANAGER_USER_NOT_EXISTS;}
 	Map_return result = hash_map_remove_and_free(users_manager->m_users , user_name);

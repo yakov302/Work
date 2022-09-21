@@ -141,7 +141,7 @@ GroupsManager_return new_group(GroupsManager* groups_manager, const char* group_
     return GROUPS_MANAGER_SUCCESS;
 }
 
-GroupsManager_return join_existing_group (GroupsManager* groups_manager, char* group_name, char* return_ip)
+GroupsManager_return join_existing_group(GroupsManager* groups_manager, char* group_name, char* return_ip)
 {
 	if (groups_manager == NULL || group_name == NULL || return_ip == NULL)
 	    return GROUPS_MANAGER_UNINITIALIZED_ARGS;
@@ -194,3 +194,10 @@ void give_all_groups_names(GroupsManager* groups_manager, char* groups_names_lis
     
     give_all_keys_names(groups_manager->m_groups, groups_names_list, write_key_to_buffer);
 }
+
+int num_of_groups(GroupsManager* groups_manager)
+{
+	if(groups_manager == NULL) {return;}
+	return hash_map_size(groups_manager->m_groups);
+}
+
