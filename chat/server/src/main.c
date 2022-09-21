@@ -1,13 +1,61 @@
 #include "router.h"
-//#include "subscribs_manager.h"
+#include "subscribs_manager.h"
 #include "users_manager.h"
+#include "groups_manager.h"
 
-
-
-
+static int print_ips(void* element, void* context)
+{
+    printf("%s\n", (char*)element);
+}
 
 int main()
 {
+
+    GroupsManager* gm = create_groups_manager(200);
+    if(gm == NULL){printf("gm == null\n");}
+
+    char ip[20];
+    GroupsManager_return res = new_group(gm, "yakov", ip);
+    printf("6: %d\n", res);
+    printf("ip: %s\n", ip);
+
+    res = new_group(gm, "yakov", ip);
+    printf("1: %d\n", res);
+
+    res = new_group(gm, "yakov hananael", ip);
+    printf("6: %d\n", res);
+    printf("ip: %s\n", ip);
+
+    res = join_existing_group (gm, "yakov", ip);
+    printf("6: %d\n", res);
+    printf("224.255.255.1: %s\n", ip);
+
+    res = join_existing_group (gm, "yakov hananael", ip);
+    printf("6: %d\n", res);
+    printf("224.255.255.2: %s\n", ip);
+
+    res = join_existing_group (gm, "yakov  hananael", ip);
+    printf("2: %d\n", res);
+
+    res = leave_group (gm, "yakov");
+    printf("6: %d\n", res);
+
+    //queue_for_each(gm->m_ips, print_ips, NULL);
+
+    res = leave_group (gm, "yakov");
+    printf("7: %d\n", res);
+
+    //queue_for_each(gm->m_ips, print_ips, NULL);
+
+    res = leave_group (gm, "yakov");
+    printf("2: %d\n", res);
+
+    char list [500];
+    give_all_groups_names(gm, list);
+    printf("list:\n%s", list);
+
+    destroy_groups_manager(gm);
+
     // SubscribsManager* sm = create_subscribs_manager(200);
     // if(sm == NULL){printf("sm == null\n");}
 
@@ -53,65 +101,65 @@ int main()
     // destroy_subscribs_manager(sm);
 
 
-    UserManager* um = create_users_manager(200);
-    if(um == NULL){printf("um == null\n");}
+    // UserManager* um = create_users_manager(200);
+    // if(um == NULL){printf("um == null\n");}
 
 
-    UserManager_return rese = user_log_in(um, "yakov hananel");
-    printf("0: %d\n", rese);
+    // UserManager_return rese = user_log_in(um, "yakov hananel");
+    // printf("0: %d\n", rese);
 
-     rese = user_log_in(um, "yakov hananel");
-    printf("6: %d\n", rese);
+    //  rese = user_log_in(um, "yakov hananel");
+    // printf("6: %d\n", rese);
 
-        rese =  user_log_out(um, "yakov hananel");
-    printf("0: %d\n", rese);
+    //     rese =  user_log_out(um, "yakov hananel");
+    // printf("0: %d\n", rese);
 
-         rese = user_log_in(um, "yakov hananel");
-    printf("0: %d\n", rese);
+    //      rese = user_log_in(um, "yakov hananel");
+    // printf("0: %d\n", rese);
 
-     rese = user_join_group(um, "yakov hananel", "yyy");
-     printf("0: %d\n", rese);
+    //  rese = user_join_group(um, "yakov hananel", "yyy");
+    //  printf("0: %d\n", rese);
 
-    rese = user_join_group(um, "yakov hananel", "yyy");
-     printf("5: %d\n", rese);
+    // rese = user_join_group(um, "yakov hananel", "yyy");
+    //  printf("5: %d\n", rese);
 
-    rese = user_leave_group(um, "yakov hananel", "yyy");
-    printf("0: %d\n", rese);
-
-
-    rese = user_join_group(um, "yakov hananel", "yyy");
-     printf("0: %d\n", rese);
+    // rese = user_leave_group(um, "yakov hananel", "yyy");
+    // printf("0: %d\n", rese);
 
 
-    rese = user_join_group(um, "yakov  hananel", "875");
-     printf("3: %d\n", rese);
-
-    rese = user_join_group(um, "yakov hananel", "yyuuy");
-     printf("0: %d\n", rese);
+    // rese = user_join_group(um, "yakov hananel", "yyy");
+    //  printf("0: %d\n", rese);
 
 
-    rese = user_leave_group(um, "yakov hananel", "yyy");
-    printf("0: %d\n", rese);
+    // rese = user_join_group(um, "yakov  hananel", "875");
+    //  printf("3: %d\n", rese);
 
-    rese = user_leave_group(um, "yakov aananel", "yyy");
-    printf("3: %d\n", rese);
+    // rese = user_join_group(um, "yakov hananel", "yyuuy");
+    //  printf("0: %d\n", rese);
 
-    rese = user_leave_group(um, "yakov hananel", "yyy");
-    printf("4: %d\n", rese);
 
-    rese = user_leave_group(um, "yakov hananel", "yy98y");
-    printf("4: %d\n", rese);
+    // rese = user_leave_group(um, "yakov hananel", "yyy");
+    // printf("0: %d\n", rese);
 
-    rese = user_leave_group(um, "yakov hananel", "yyuuy");
-    printf("0: %d\n", rese);
+    // rese = user_leave_group(um, "yakov aananel", "yyy");
+    // printf("3: %d\n", rese);
 
-    rese =  user_log_out(um, "yakov hananel");
-    printf("0: %d\n", rese);
+    // rese = user_leave_group(um, "yakov hananel", "yyy");
+    // printf("4: %d\n", rese);
 
-    rese =  user_log_out(um, "yakov hananel");
-    printf("3: %d\n", rese);
+    // rese = user_leave_group(um, "yakov hananel", "yy98y");
+    // printf("4: %d\n", rese);
 
-    destroy_users_manager(um);
+    // rese = user_leave_group(um, "yakov hananel", "yyuuy");
+    // printf("0: %d\n", rese);
+
+    // rese =  user_log_out(um, "yakov hananel");
+    // printf("0: %d\n", rese);
+
+    // rese =  user_log_out(um, "yakov hananel");
+    // printf("3: %d\n", rese);
+
+    // destroy_users_manager(um);
 
     // Router* router = router_create(); 
     // if(router == NULL)

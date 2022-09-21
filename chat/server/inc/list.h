@@ -47,13 +47,13 @@ void list_destroy(List** _list, ElementDestroy free_item);
 
 void list_erase(const List* list, ElementDestroy free_item);
 
-List_return list_push_head(List* _list, void* _item);
+List_return list_push_head(List* _list, void* item);
 
-List_return list_push_tail(List* _list, void* _item);
+List_return list_push_tail(List* _list, void* item);
 
-List_return list_pop_head(List* _list, void** _item);
+List_return list_pop_head(List* _list, void** deleted_item);
 
-List_return list_pop_tail(List* _list, void** _pItem);
+List_return list_pop_tail(List* _list, void** deleted_item);
 
 size_t list_size(const List* _list);
 

@@ -2,19 +2,18 @@
 
 static size_t hash_for_subscriber_name(void* name)
 {
-	int i;
-	size_t mul = 1;
-    
+	size_t mul = 1;    
 	const int len = strlen ((char*)name);
-	for (i = 0; i < len; ++i)
+
+	for (int i = 0; i < len; ++i)
 		mul *= ((char*)name)[i]+((i+1));
 
 	return mul;
 }
 
-static int compare_subscriber_names (const void* first_name, const void* second_name)	
+static int compare_subscriber_names (const void* hash_element, const void* subscriber_name)	
 {
-	if (strcmp(((Subscriber*)((Element*)first_name)->m_value)->m_name, (char*)second_name) == 0)
+	if (strcmp(((Subscriber*)((Element*)hash_element)->m_value)->m_name, (char*)subscriber_name) == 0)
 		return EQUAL;
 
 	return NOT_EQUAL;

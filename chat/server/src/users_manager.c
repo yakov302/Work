@@ -2,19 +2,18 @@
 
 static size_t hash_for_user_name(void* name)
 {
-	int i;
 	size_t mul = 1;
-
 	const int len = strlen ((char*)name);
-	for (i = 0; i < len; ++i)
+
+	for (int i = 0; i < len; ++i)
 		mul *= ((char*)name)[i]+((i+1));
 
 	return mul;
 }
 
-static int compare_user_names (const void* first_name, const void* second_name)	
+static int compare_user_names (const void* hash_element, const void* user_name)	
 {
-	if (strcmp ((char*)((User*)((Element*)first_name)->m_value)->m_name, (char*)second_name) == 0)
+	if (strcmp ((char*)((User*)((Element*)hash_element)->m_value)->m_name, (char*)user_name) == 0)
 	{
 		return EQUAL;
 	}
@@ -36,19 +35,19 @@ UserManager* create_users_manager(int capacity)
     if(capacity < 1)
         return NULL;
 
-	UserManager* user_manager = (UserManager*)malloc(sizeof(UserManager));
-	if (user_manager == NULL)
+	UserManager* users_manager = (UserManager*)malloc(sizeof(UserManager));
+	if (users_manager == NULL)
 	    return NULL;
 
-	user_manager->m_users = hash_map_create(capacity, hash_for_user_name, compare_user_names, destroy_user_element);
-	if (user_manager->m_users == NULL)
+	users_manager->m_users = hash_map_create(capacity, hash_for_user_name, compare_user_names, destroy_user_element);
+	if (users_manager->m_users == NULL)
 	{
-		free(user_manager);
+		free(users_manager);
 		return NULL; 
 	}
 
-    user_manager->m_magic_number = MAGIC_NUMBER;
-	return user_manager;
+    users_manager->m_magic_number = MAGIC_NUMBER;
+	return users_manager;
 }
 
 void destroy_users_manager(UserManager* user_manager)
