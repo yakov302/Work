@@ -197,7 +197,7 @@ void give_all_groups_names(GroupsManager* groups_manager, char* groups_names_lis
 
 int num_of_groups(GroupsManager* groups_manager)
 {
-	if(groups_manager == NULL) {return;}
+	if(groups_manager == NULL) {return 0;}
 	return hash_map_size(groups_manager->m_groups);
 }
 

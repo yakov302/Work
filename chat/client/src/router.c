@@ -94,7 +94,7 @@ static void wake_up(Router* router)
     char buff[40];
 
     args_create(&arg, 0, 0, 0);
-    int size = pack(buff, &arg, WAKE_UP_SERVER);
+    int size = pack(buff, &arg, WAKE_UP_CLIENT);
     args_destroy(&arg);
 
     send_to_server(router->m_socket, buff, size, router->m_mutex);

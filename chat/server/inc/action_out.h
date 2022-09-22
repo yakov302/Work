@@ -14,5 +14,7 @@ void send_connect_to_group_success(char* group_name, char* ip, Message_type mess
 
 void send_all_groups_names(char* groups_names_list, int client_socket, Mutex* mutex);
 
+void send_leave_group_success(char* group_name, Message_type message_type, int client_socket, Mutex* mutex);
+
 
 #endif // ACTION_OUT_H

@@ -35,6 +35,7 @@ typedef enum Message_type
 
     BUFFER_NOT_INITIALIZE,
     ARGS_NOT_INITIALIZE,
+    UNKNOWN_COMMAND,
 
     // Client to server
 
@@ -45,7 +46,7 @@ typedef enum Message_type
     PRINT_EXISTING_GROUPS_REQUEST,
     JOIN_EXISTING_GROUP_REQUEST,
     LEAVE_GROUP_REQUEST,
-    WAKE_UP_SERVER,
+    WAKE_UP_CLIENT,
 
     // Server to client
 
@@ -74,9 +75,9 @@ typedef enum Message_type
     LEAVE_GROUP_SUCCESS,
     LEAVE_GROUP_FAIL,
     LEAVE_GROUP_GROUP_DELETED,
-    WAKE_UP_CLIENT
+    LEAVE_GROUP_GROUP_NOT_EXISTS,
+    LEAVE_GROUP_USER_NOT_EXISTS,
     
-
 } Message_type;
 
 

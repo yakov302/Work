@@ -6,7 +6,7 @@
 #include "list_iterator.h"
 
 #define MAGIC_NUMBER 144522
-#define STRING_SIZE 30
+#define STRING_SIZE 68
 
 typedef enum User_return
 {

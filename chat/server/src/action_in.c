@@ -23,7 +23,7 @@ void destroy_action_in(ActionIn* action_in)
     action_in = NULL;
 }
 
-static give_1_strings(char* buffer, char* string)
+static void give_1_strings(char* buffer, char* string)
 {
     Args arg;
     args_create(&arg, 1, 0, 0);
@@ -33,7 +33,7 @@ static give_1_strings(char* buffer, char* string)
     args_destroy(&arg);
 }
 
-static give_2_strings(char* buffer, char* first_string, char* second_string)
+static void give_2_strings(char* buffer, char* first_string, char* second_string)
 {
     Args arg;
     args_create(&arg, 2, 0, 0);
@@ -233,14 +233,53 @@ static void join_existing_request(GroupsManager* groups_manager, UsersManager* u
     }
 }
 
-static void leave_group_request()
+static void leave_group_request(GroupsManager* groups_manager, UsersManager* users_manager, char* buffer, int client_socket, Mutex* mutex)
 {
+    char user_name[STRING_SIZE]; char group_name[STRING_SIZE];
+    give_2_strings(buffer, user_name, group_name);
 
-}
+    UsersManager_return u_result = user_leave_group(users_manager, user_name, group_name);
+    switch (u_result)
+    {
+        case USER_MANAGER_USER_NOT_EXISTS:
+            send_only_message(LEAVE_GROUP_USER_NOT_EXISTS, client_socket, mutex);
+            return;
 
-static void wake_up_server()
-{
+         case USER_MANAGER_GROUP_NOT_EXISTS:
+            send_only_message(LEAVE_GROUP_GROUP_NOT_EXISTS, client_socket, mutex);
+            return;
 
+         case USER_MANAGER_SUCCESS:
+            break;
+
+        default:
+            printf("user_leave_group fail! UsersManager_return: %d\n", u_result);
+            send_only_message(LEAVE_GROUP_FAIL, client_socket, mutex);
+            return;
+    }
+
+    GroupsManager_return g_result = leave_group(groups_manager, group_name);
+    switch (g_result)
+    {
+        case GROUPS_MANAGER_GROUP_NOT_EXISTS:
+            send_only_message(LEAVE_GROUP_GROUP_NOT_EXISTS, client_socket, mutex);
+            user_join_group(users_manager, user_name, group_name);
+            break;
+
+        case GROUPS_MANAGER_GROUP_DELETED:
+            send_leave_group_success(group_name, LEAVE_GROUP_GROUP_DELETED, client_socket, mutex);
+            break;
+
+        case GROUPS_MANAGER_SUCCESS:
+            send_leave_group_success(group_name, LEAVE_GROUP_SUCCESS, client_socket, mutex);
+            break;
+        
+        default:
+            printf("leave_group fail! GroupsManager_return: %d\n", g_result);
+            user_join_group(users_manager, user_name, group_name);
+            send_only_message(LEAVE_GROUP_FAIL, client_socket, mutex);
+            break;
+    }
 }
 
 void get_buffer(ActionIn* action_in, char* buffer, int client_socket, Mutex* mutex)
@@ -274,14 +313,15 @@ void get_buffer(ActionIn* action_in, char* buffer, int client_socket, Mutex* mut
             break;
 
         case LEAVE_GROUP_REQUEST:
-            leave_group_request();
+            leave_group_request(action_in->m_gruops_manager, action_in->m_users_manager, buffer, client_socket, mutex);
             break;
 
-        case WAKE_UP_SERVER:
-            wake_up_server();
+        case WAKE_UP_CLIENT:
+            send_only_message(WAKE_UP_CLIENT, client_socket, mutex);
             break;
 
         default:
+            send_only_message(UNKNOWN_COMMAND, client_socket, mutex);
             break;
     }
 }

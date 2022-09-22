@@ -1,23 +1,15 @@
-#include "router.h"
-#include "subscribs_manager.h"
-#include "users_manager.h"
-#include "groups_manager.h"
-
-static int print_ips(void* element, void* context)
-{
-    printf("%s\n", (char*)element);
-}
+#include "server_manager.h"
 
 int main()
 {
 
-    GroupsManager* gm = create_groups_manager(200);
-    if(gm == NULL){printf("gm == null\n");}
+    // GroupsManager* gm = create_groups_manager(200);
+    // if(gm == NULL){printf("gm == null\n");}
 
-    char ip[20];
-    GroupsManager_return res = new_group(gm, "yakov", ip);
-    printf("6: %d\n", res);
-    printf("ip: %s\n", ip);
+    // char ip[20];
+    // GroupsManager_return res = new_group(gm, "yakov", ip);
+    // printf("6: %d\n", res);
+    // printf("ip: %s\n", ip);
 
     // res = new_group(gm, "yakov", ip);
     // printf("1: %d\n", res);
@@ -55,18 +47,18 @@ int main()
     // printf("list:\n%s", list);
 
 
-    char groups_names_list[GRUPS_NAMES_LIST_SIZE] = {0};
-    give_all_groups_names(gm, groups_names_list);
+    // char groups_names_list[GRUPS_NAMES_LIST_SIZE] = {0};
+    // give_all_groups_names(gm, groups_names_list);
 
-    if(num_of_groups(gm) < 1)
-        printf("no groups\n");
-    else
-    {
-        printf("size: %d\n", sizeof(groups_names_list));
-       printf("list:\n%s", groups_names_list);
-    }
+    // if(num_of_groups(gm) < 1)
+    //     printf("no groups\n");
+    // else
+    // {
+    //     printf("size: %d\n", sizeof(groups_names_list));
+    //    printf("list:\n%s", groups_names_list);
+    // }
 
-            destroy_groups_manager(gm);
+    //         destroy_groups_manager(gm);
 
 
     // SubscribsManager* sm = create_subscribs_manager(200);
@@ -174,22 +166,20 @@ int main()
 
     // destroy_users_manager(um);
 
-    // Router* router = router_create(); 
-    // if(router == NULL)
-    // {
-    //     printf("router not initialized\n");
-    //     return 0;
-    // }
+    ServerManager* sm =  server_manager_create(250, 300, 1000);
+    if(sm == NULL)
+    {
+        printf("server manager not initialized\n");
+        return 0;
+    }
 
-    // while(TRUE)
-    // {
-    //     char c = getchar();
-    //     if(c == 'q' || c == 27)
-    //     {
-    //         stop_router(router);
-    //         break;
-    //     }
-    // }
-
-    // router_destroy(router);
+    while(TRUE)
+    {
+        char c = getchar();
+        if(c == 'q' || c == 27)
+        {
+            server_manager_destroy(sm);
+            break;
+        }
+    }
 }

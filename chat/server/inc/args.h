@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STRING_SIZE 30
+#define STRING_SIZE 68
 
 typedef struct Args
 {

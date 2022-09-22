@@ -12,7 +12,7 @@ void initial_notice(Socket* socket, char* buffer, Mutex* mutex)
     push_int(&arg, my_socket(socket));
     sprintf(message, "from client to server : %d", my_socket(socket));
     push_string(&arg, message);
-    int size = pack(buff, &arg, MESSAGES_4);
+    int size = pack(buff, &arg, WAKE_UP_CLIENT);
     args_destroy(&arg);
 
     send_to_server(socket, buff, size, mutex);

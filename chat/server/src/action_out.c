@@ -59,3 +59,13 @@ void send_all_groups_names(char* groups_names_list, int client_socket, Mutex* mu
         printf("send to client %d fail, return value: %d", client_socket, result);  
 }
 
+void send_leave_group_success(char* group_name, Message_type message_type, int client_socket, Mutex* mutex)
+{
+    char buffer[BUFFER_SIZE];
+    int size = pack_1_strings(buffer, message_type, group_name);
+
+    int result = send_to_client(client_socket, buffer, size, mutex);
+    if(result != TRUE)
+        printf("send to client %d fail, return value: %d", client_socket, result); 
+}
+
