@@ -27,8 +27,8 @@ void list_destroy(List** list, ElementDestroy element_destroy)
 
 		if(element_destroy != NULL)
 			element_destroy(node->m_data);		
-
 		free(node);
+
 		node = next;   		
 	}
 
@@ -138,21 +138,6 @@ int list_is_exists(const List* list, Compar is_equal, const void* item)
 	return NO;
 }
 
-void push_node(Node *node, Node *next)
-{
-	node->m_prev = next->m_prev;
-	node->m_next = next;
-	next->m_prev->m_next = node;
-	next->m_prev = node;
-}
-
-void pop_node(Node* node)
-{
-	node->m_next->m_prev = node->m_prev;
-	node->m_prev->m_next = node->m_next;
-	free(node);
-}
-
 void list_print(List* list, PrintItem print)
 {
 	if (list == NULL || print == NULL) 
@@ -164,4 +149,20 @@ void list_print(List* list, PrintItem print)
 		print((void*)node->m_data);
 		node = node->m_next; 
 	} 
+}
+
+
+static void push_node(Node *node, Node *next)
+{
+	node->m_prev = next->m_prev;
+	node->m_next = next;
+	next->m_prev->m_next = node;
+	next->m_prev = node;
+}
+
+static void pop_node(Node* node)
+{
+	node->m_next->m_prev = node->m_prev;
+	node->m_prev->m_next = node->m_next;
+	free(node);
 }

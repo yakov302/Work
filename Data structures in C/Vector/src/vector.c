@@ -1,6 +1,6 @@
 #include "vector.h"
 
-Vector* vector_create (size_t capacity, size_t resizing_size)
+Vector* vector_create (size_t capacity, size_t resizing_size, ElementDestroy element_destroy)
 {
 	if(capacity < 1 && resizing_size < 1) {return NULL;}
 
@@ -18,18 +18,19 @@ Vector* vector_create (size_t capacity, size_t resizing_size)
 	vector->m_size = capacity;
 	vector->m_nun_of_items = 0;
 	vector->m_resizing_size = resizing_size;
+	vector->m_element_destroy = element_destroy;
     return vector;
 }
 
-void vector_destroy (Vector** vector, ElementDestroy element_destroy)
+void vector_destroy (Vector** vector)
 {
 	if(vector == NULL || *vector == NULL) {return;}
 	
-	if(element_destroy != NULL)
+	if((*vector)->m_element_destroy != NULL)
 	{
         size_t size = (*vector)->m_nun_of_items;
 		for(size_t i = 0; i < size; ++i)
-			element_destroy((*vector)->m_array[i]);
+			(*vector)->m_element_destroy((*vector)->m_array[i]);
 	}
 	
 	free ((*vector)->m_array);
@@ -103,12 +104,12 @@ Vector_return vector_pop_back(Vector* vector, void** return_item)
 			return result;
 	}
 
-	*return_item =  vector->m_array[vector->m_nun_of_items - 1];
+	*return_item = vector->m_array[vector->m_nun_of_items - 1];
 	vector->m_nun_of_items--;
     return VECTOR_SUCCESS;
 }
 
-Vector_return vector_pop_back_no_return(Vector* vector)
+Vector_return vector_pop_back_and_free(Vector* vector)
 {
     if(vector == NULL) {return VECTOR_UNITIALIZED_ARGS;}
 
@@ -122,6 +123,7 @@ Vector_return vector_pop_back_no_return(Vector* vector)
 			return result;
 	}
 
+	vector->m_element_destroy(vector->m_array[vector->m_nun_of_items - 1]);
 	vector->m_nun_of_items--;
     return VECTOR_SUCCESS;
 }
@@ -152,7 +154,7 @@ Vector_return vector_pop(Vector* vector, size_t index, void** return_item)
     return VECTOR_SUCCESS;
 }
 
-Vector_return vector_pop_no_return(Vector* vector, size_t index)
+Vector_return vector_pop_and_free(Vector* vector, size_t index)
 {
 	if(vector == NULL) {return VECTOR_UNITIALIZED_ARGS;}
 	if (index < 0 || index >= vector->m_nun_of_items) {return VECTOR_INVALID_INDEX;}
@@ -164,6 +166,7 @@ Vector_return vector_pop_no_return(Vector* vector, size_t index)
 			return result;
 	}
 
+	vector->m_element_destroy(vector->m_array[index]);
 	shrink_array(vector, index);
 	vector->m_nun_of_items--;
     return VECTOR_SUCCESS;

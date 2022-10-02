@@ -7,7 +7,7 @@ static int is_prime(int number)
     
   for (int i = 2; i < number; ++i) 
   {
-    if (number%i == 0) 
+    if(number%i == 0) 
         return FALSE;
   }
 
@@ -32,7 +32,7 @@ HashMap* hash_map_create(size_t capacity, HashFunction hash_function, Comparison
         return NULL;
 
    	size_t finel_capacity = calculate_capacity(capacity); 
-    hash_map->m_lists = (List**)calloc(finel_capacity , sizeof(List*));
+    hash_map->m_lists = (List**)calloc(finel_capacity, sizeof(List*));
 	if (hash_map->m_lists == NULL)
 	{
 		free(hash_map);

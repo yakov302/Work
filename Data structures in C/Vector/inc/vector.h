@@ -8,13 +8,17 @@
 #define TRUE 1
 #define FALSE 0
 
+typedef void(*ElementDestroy)(void* item);
+typedef int(*Action)(void*, void*);
+
 typedef struct Vector
 {
     void** m_array;
     size_t m_original_size;
     size_t m_size;
     size_t m_nun_of_items;
-    size_t m_resizing_size ;
+    size_t m_resizing_size;
+    ElementDestroy m_element_destroy;
 
 }Vector;
 
@@ -30,22 +34,19 @@ typedef enum Vector_return
 
 }Vector_return;
 
-typedef void(*ElementDestroy)(void* item);
-typedef int(*Action)(void*, void*);
+Vector* vector_create (size_t capacity, size_t resizing_size, ElementDestroy element_destroy);
 
-Vector* vector_create (size_t capacity, size_t resizing_size);
-
-void vector_destroy (Vector** vector, ElementDestroy element_destroy);
+void vector_destroy (Vector** vector);
 
 Vector_return vector_push_back(Vector* vector, void* item);
 
 Vector_return vector_pop_back(Vector* vector, void** return_item);
 
-Vector_return vector_pop_back_no_return(Vector* vector);
+Vector_return vector_pop_back_and_free(Vector* vector);
 
 Vector_return vector_pop(Vector* vector, size_t index, void** return_item); // o(n) to shrink
 
-Vector_return vector_pop_no_return(Vector* vector, size_t index); // o(n) to shrink
+Vector_return vector_pop_and_free(Vector* vector, size_t index); // o(n) to shrink
 
 Vector_return vector_get(const Vector* vector, size_t index, void** return_item);
 
