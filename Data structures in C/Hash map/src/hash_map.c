@@ -7,7 +7,7 @@ static int is_prime(int number)
     
   for (int i = 2; i < number; ++i) 
   {
-    if(number%i == 0) 
+    if (number%i == 0) 
         return FALSE;
   }
 
@@ -32,7 +32,7 @@ HashMap* hash_map_create(size_t capacity, HashFunction hash_function, Comparison
         return NULL;
 
    	size_t finel_capacity = calculate_capacity(capacity); 
-    hash_map->m_lists = (List**)calloc(finel_capacity, sizeof(List*));
+    hash_map->m_lists = (List**)calloc(finel_capacity , sizeof(List*));
 	if (hash_map->m_lists == NULL)
 	{
 		free(hash_map);
@@ -154,10 +154,9 @@ int hash_map_is_exists(const HashMap* map, const void* key)
 {
     if(map == NULL || key == NULL)
         return FALSE;
-	
+
     size_t index = map->m_hash_function((void*)key)%map->m_capacity;
 	if(map->m_lists[index] == NULL){return FALSE;}
-
 	return list_is_exists(map->m_lists[index], map->m_comparison_function, key);
 }
 
@@ -174,6 +173,24 @@ Map_return hash_map_find(const HashMap* map, const void* key, void** value_ptr)
 	
 	*value_ptr = ((Element*)get_data(it))->m_value;
     return MAP_SUCCESS;
+}
+
+Element* hash_map_find_by_customize_key(const HashMap* map, ComparisonFunction customize_compar , void* customize_key)
+{
+	if(map == NULL || customize_compar == NULL || customize_key == NULL)
+        return NULL;
+	
+	for(int i = 0; i < map->m_capacity; ++i)
+	{
+		if(map->m_lists[i] != NULL)
+		{
+			Element* it = find_first(map->m_lists[i],customize_compar, customize_key);
+			if(it != NULL)
+				return (Element*)get_data(it);
+		}
+	}
+	
+    return NULL;
 }
 
 size_t hash_map_size(const HashMap* map)
@@ -217,4 +234,23 @@ void give_all_keys_names(HashMap* map, char* key_list, WriteKeyToBuffer write_ke
 			write_keys_name(map->m_lists[i], key_list, write_key_to_buffer);		
 	}
 }
+
+Element* hash_map_for_each(HashMap* map, ActionFunction action , void* context)
+{
+	if(map == NULL || action == NULL)
+        return NULL;
+	
+	for(int i = 0; i < map->m_capacity; ++i)
+	{
+		if(map->m_lists[i] != NULL)
+		{
+			Element* element = list_for_each(map->m_lists[i], action , context);
+			if(element != NULL)
+				return get_data(element);
+		}
+	}
+	
+    return NULL;
+}
+
 

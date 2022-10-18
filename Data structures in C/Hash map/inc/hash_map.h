@@ -13,10 +13,12 @@ typedef struct Element
 
 }Element;
 
+typedef int(*ActionFunction)(void* element, void* context);
 typedef size_t (*HashFunction)(void* key);
 typedef int (*ComparisonFunction)(const void* hash_element, const void* key);
 typedef void (*ElementDestroy)(void* element);
 typedef void (*WriteKeyToBuffer)(void* key, char* key_list);
+
 
 typedef struct HashMap
 {
@@ -29,8 +31,7 @@ typedef struct HashMap
 
 }HashMap;
 
-typedef enum Map_return 
-{
+typedef enum Map_return {
 	MAP_SUCCESS,
 	MAP_UNINITIALIZED_ARGS, 					
 	MAP_KEY_ALREADY_EXISTS, 		
@@ -57,11 +58,15 @@ int hash_map_is_exists(const HashMap* map, const void* key);
 
 Map_return hash_map_find(const HashMap* map, const void* key, void** value_ptr);
 
+Element* hash_map_find_by_customize_key(const HashMap* map, ComparisonFunction customize_compar , void* customize_key); // o(n)
+
 size_t hash_map_size(const HashMap* map);
 
 void hash_map_print(HashMap* map, PrintItem print_element);
 
 void give_all_keys_names(HashMap* map, char* key_list, WriteKeyToBuffer write_key_to_buffer);
+
+Element* hash_map_for_each(HashMap* map, ActionFunction action , void* context);
 
 
 #endif // HASH_MAP_H
