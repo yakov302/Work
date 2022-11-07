@@ -17,8 +17,14 @@ bool sign(char sign)
 	return POSITIVE;
 }
 
-void convet_int_to_list_of_digit(std::list<int>& big_int, long long int number)
+void convet_int_to_list_of_digit(BigIntList& big_int, long long int number)
 {
+	if(number == 0)
+	{
+		big_int.push_front(0);
+		return;
+	}
+
 	if(number < 0)
 		number *= -1;
 
@@ -30,7 +36,7 @@ void convet_int_to_list_of_digit(std::list<int>& big_int, long long int number)
 	}
 }
 
-void convert_string_to_list_of_digit(std::list<int>& big_int, std::string& number)
+void convert_string_to_list_of_digit(BigIntList& big_int, std::string& number)
 {
 	const int num_of_digit = number.size();
 	for (int i = num_of_digit - 1; i >= 0; i--)
@@ -40,7 +46,7 @@ void convert_string_to_list_of_digit(std::list<int>& big_int, std::string& numbe
 	}
 }
 
-void convert_chars_to_list_of_digit(std::list<int>& big_int, const char* number)
+void convert_chars_to_list_of_digit(BigIntList& big_int, const char* number)
 {
 	const int num_of_digit = strlen(number);
 	for (int i = num_of_digit - 1; i >= 0; i--)
@@ -68,7 +74,7 @@ void make_my_right_side(BigInteger& my, const char* right_side)
 	my = big_int;
 }
 
-std::_List_iterator<int> init_iterator(std::list<int>& big_int)
+BigIntIterator init_iterator(BigIntList& big_int)
 {
 	auto it = big_int.end();
 	it--;
@@ -85,7 +91,7 @@ int remainder(int number)
 	return (number - enter(number)) / 10;
 }
 
-void check_tail(std::list<int>& result, std::list<int>& big_int, std::_List_iterator<int>& it, int* carry)
+void check_tail(BigIntList& result, BigIntList& big_int, BigIntIterator& it, int* carry)
 {
 	auto it_end = big_int.end();
 	while (it != it_end )
@@ -93,6 +99,194 @@ void check_tail(std::list<int>& result, std::list<int>& big_int, std::_List_iter
 		result.push_front(impl::enter(*it + *carry));
 		*carry = impl::remainder(*it + *carry);
 		it--;
+	}
+}
+
+int who_is_bigger(BigIntList& first, BigIntList& second)
+{
+	if(first.size() > second.size())
+		return FIRST;
+
+	if(first.size() < second.size())
+		return SECOND;
+
+	auto it_end  = first.end();
+	auto it_first  = first.begin();
+	auto it_second = second.begin();
+	while(it_first != it_end)
+	{
+		if(*it_first > *it_second)
+			return FIRST;
+
+		if(*it_first < *it_second)
+			return SECOND;
+
+		it_first++;
+		it_second++;
+	}
+
+	return EQUALS;
+}
+
+bool set_first_and_second(BigIntIterator& first, BigIntIterator& second, BigIntIterator& first_end, BigIntIterator& second_end, BigInteger& my, BigInteger& right_side)
+{
+	int result = who_is_bigger(my.m_big_int, right_side.m_big_int);
+
+	if(result == EQUALS)
+		return false;
+
+	if(result == FIRST)
+	{
+		first = impl::init_iterator(my.m_big_int);
+		second = impl::init_iterator(right_side.m_big_int);
+		first_end = my.m_big_int.end();
+		second_end = right_side.m_big_int.end();
+	}
+
+	if(result == SECOND)
+	{
+		first = impl::init_iterator(right_side.m_big_int);
+		second = impl::init_iterator(my.m_big_int);
+		first_end = right_side.m_big_int.end();
+		second_end = my.m_big_int.end();
+	}
+
+	return true;
+}
+
+void lend(BigIntIterator first, BigIntIterator& second)
+{
+	if (*first - *second >= 0)
+		return;
+
+	*first += 10;
+	first--;
+
+	while(*first == 0)
+	{
+		*first = 9;
+		first--;
+	}
+
+	*first -= 1;
+}
+
+void check_tail(BigIntIterator& first, BigIntIterator& first_end, BigIntList& result)
+{
+	while (first != first_end)
+	{
+		result.push_front(*first);
+		first--;
+	}
+}
+
+void set_sign(bool& result_sign, bool& my_sign, bool& right_side_sign, BigInteger& my, BigInteger& right_side)
+{
+	int result = who_is_bigger(my.m_big_int, right_side.m_big_int);
+	if(result == FIRST)
+	{
+		if(my_sign == NEGATIVE && right_side_sign == NEGATIVE)
+			result_sign = NEGATIVE;
+
+		return;
+	}
+
+	if(result == SECOND)
+	{
+		if(my_sign == POSITIVE && right_side_sign == POSITIVE)
+			result_sign = NEGATIVE;
+
+		return;
+	}
+}
+
+void set_sign(bool& result_sign, bool& my_sign, bool& right_side_sign)
+{
+	if(my_sign != right_side_sign)
+		result_sign = NEGATIVE;
+	else
+		result_sign = POSITIVE;
+}
+
+void delete_zeros_on_left(BigInteger& result)
+{
+	auto it = result.m_big_int.begin();
+	auto end = result.m_big_int.end();
+	while(it != end)
+	{
+		if(*it == 0)
+			it = result.m_big_int.erase(it);
+		else
+			break;
+
+		it++;
+	}
+}
+
+void flip_sign(BigInteger& big_int)
+{
+	if(big_int.m_sign == NEGATIVE)
+		big_int.m_sign = POSITIVE;
+	else
+		big_int.m_sign = NEGATIVE;
+}
+
+BigInteger make_sub(BigInteger& my, BigInteger& right_side)
+{
+	flip_sign(my);
+	BigInteger result = my - right_side;
+	flip_sign(result);
+	return result;
+}
+
+BigInteger make_add(BigInteger& my, BigInteger& right_side)
+{
+	flip_sign(my);
+	BigInteger result = my + right_side;
+	flip_sign(result);
+	return result;
+}
+
+void zeros_padding(BigIntList& big_int, int padding_index)
+{
+	for(int i = 0; i < padding_index; ++i)
+		big_int.push_front(0);
+}
+
+void close_iteration(BigInteger& temp, BigInteger& result, BigIntIterator& second, int* carry, int* padding_index)
+{
+	if (*carry != 0)
+	{
+		temp.m_big_int.push_front(*carry);
+		*carry = 0;
+	}
+
+	result = result + temp;
+	temp.m_big_int.clear();
+	*padding_index += 1;
+	second--;
+}
+
+bool all_digits_are_zero(BigIntList& big_int)
+{
+	auto it = big_int.begin();
+	auto end = big_int.end();
+	while(it != end)
+	{
+		if(*it != 0)
+			return false;
+		it++;
+	}
+	return true;
+}
+
+void settle_zero_result_case(BigInteger& result)
+{
+	if(result.m_big_int.empty() || all_digits_are_zero(result.m_big_int))
+	{
+		result.m_big_int.clear();
+		result.m_big_int.push_front(0);
+		result.m_sign = POSITIVE;
 	}
 }
 
@@ -191,20 +385,13 @@ std::ostream& operator<<(std::ostream& a_os, BigInteger const& big_int)
 	for(auto digit : big_int.m_big_int)
 		std::cout << digit;
 
-	std::cout << std::endl;
 	return a_os;
 }
 
-BigInteger& BigInteger::operator+(BigInteger& right_side)
+BigInteger BigInteger::operator+(BigInteger& right_side)
 {
-	// if (first.m_sign != second.m_sign)
-	// {
-	// 	clean(this->m_list);
-	// 	first.flipSign();
-	// 	*this = first.sub(second);
-	// 	this->flipSign();
-	// 	return *this;
-	// }
+	if(this->m_sign != right_side.m_sign)
+		return impl::make_sub(*this, right_side);
 
 	int carry = 0;
 	BigInteger result;
@@ -226,497 +413,99 @@ BigInteger& BigInteger::operator+(BigInteger& right_side)
 	impl::check_tail(result.m_big_int, right_side.m_big_int, second, &carry);
 	if (carry != 0)
 		result.m_big_int.push_front(carry);
-
-	*this = result;
-	return *this;
+	return result;
 }
 
-BigInteger& BigInteger::operator+(BigInteger&& right_side)
+BigInteger BigInteger::operator+(BigInteger&& right_side)
 {
-	BigInteger big_int(right_side);
-	*this + big_int;
-	return *this;
+	return *this + right_side;
 }
 
-// BigInteger& BigInteger::sub(BigInteger const& a_rhs)
-// {
-// 	BigInteger first = *this;
-// 	BigInteger second = a_rhs;
-// 	if ((first.m_sign == -1 && second.m_sign == 1) || (first.m_sign == 1 && second.m_sign == -1))
-// 	{
-// 		clean(this->m_list);
-// 		first.flipSign();
-// 		*this = first.add(second);
-// 		this->flipSign();
-// 		return *this;
-// 	}
-// 	zeroPadding(first.m_list, second.m_list);
-// 	first.m_list = first.flip();
-// 	second.m_list = second.flip();
-// 	int len = first.m_list.size();
-// 	int *First = new int[len];
-// 	int *Second = new int[len];
-// 	moveToArray(first.m_list, First, second.m_list, Second);
-// 	if (first.m_sign == -1 && second.m_sign == -1)
-// 	{
-// 		this->m_sign = checkBiggest(First, Second, len);
-// 		this->flipSign();
-// 	}
-// 	else
-// 	{
-// 		this->m_sign = checkBiggest(First, Second, len);
-// 	}
-// 	LinkedList<int> result;
-
-// 	for (int i = 0; i < len; i++)
-// 	{
-// 		if (First[i] - Second[i] >= 0)
-// 		{
-// 			result.add(First[i] - Second[i]);
-// 		}
-// 		else
-// 		{
-// 			lend(First, i);
-// 			result.add(First[i] - Second[i]);
-// 		}
-// 	}
-
-// 	delete[] First;
-// 	delete[] Second;
-// 	DeleteZeros(result);
-// 	clean(this->m_list);
-// 	this->m_list = result;
-// 	return *this;
-// }
-
-// BigInteger& BigInteger::mul(BigInteger const& a_rhs)
-// {
-// 	BigInteger first = *this;
-// 	BigInteger second = a_rhs;
-// 	zeroPadding(first.m_list, second.m_list);
-// 	first.m_list = first.flip();
-// 	second.m_list = second.flip();
-// 	BigInteger result;
-// 	BigInteger temp;
-// 	ListIterator<int> itFirst = first.m_list.begin();
-// 	ListIterator<int> itSecond;
-// 	int carry = 0;
-// 	int len = 0;
-
-// 	while (itFirst.notEqual(first.m_list.end()))
-// 	{
-// 		itSecond = second.m_list.begin();
-// 		PutZeros(temp.m_list, len);
-// 		while (itSecond.notEqual(second.m_list.end()))
-// 		{
-// 			temp.m_list.add(enter(itFirst.data() * itSecond.data() + carry));
-// 			carry = remainder(itFirst.data() * itSecond.data() + carry);
-// 			itSecond.next();
-// 		}
-// 		if (carry != 0)
-// 		{
-// 			temp.m_list.add(carry);
-// 			carry = 0;
-// 		}
-
-// 		result.add(temp);
-// 		clean(temp.m_list);
-// 		itFirst.next();
-// 		len++;
-// 	}
-
-// 	DeleteZeros(result.m_list);
-// 	clean(this->m_list);
-// 	this->m_list = result.m_list;
-// 	this->m_sign = checkSigns(first.m_sign, second.m_sign);
-// 	return *this;
-// }
-
-// const char* BigInteger::toString(String& a_str) const
-// {
-// 	char* str = new char[(sizeof(char)*m_list.size()) + sizeof('\0')*2];
+BigInteger BigInteger::operator-(BigInteger& right_side)
+{
+	if(this->m_sign != right_side.m_sign)
+		return impl::make_add(*this, right_side);
 	
-// 	size_t i = 0;
-// 	ListIterator<int> it = m_list.begin();
-// 	if (m_sign == -1)
-// 	{
-// 		str[i] = '-';
-// 		i++;
-// 	}
-// 	while (it.notEqual(m_list.end()))
-// 	{
-// 		str[i] = convert2char(it.data());
-// 		i++;
-// 		it.next();
-// 	}
-// 	str[i] = '\0';
+	BigInteger result;
+	BigIntIterator first;
+	BigIntIterator second;
+	BigIntIterator first_end;
+	BigIntIterator second_end;
 
-// 	a_str.setStr(str);
-// 	return a_str.getStr();
-// }
+	if(!impl::set_first_and_second(first, second, first_end, second_end, *this, right_side))
+		return BigInteger("0");
 
-// LinkedList<int> BigInteger::flip()const
-// {
-// 	LinkedList<int> flip;
-// 	ListIterator<int> it = m_list.begin();
-// 	while (it.notEqual(m_list.end()))
-// 	{
-// 		flip.add(it.data());
-// 		it.next();
-// 	}
-// 	return flip;
-// }
+	while (first != first_end && second != second_end)
+	{
+		impl::lend(first, second);
+		result.m_big_int.push_front(*first - *second);
+		first--;
+		second--;
+	}
 
-// void BigInteger::flipSign()
-// {
-// 	m_sign *= (-1);
-// }
+	impl::check_tail(first, first_end, result.m_big_int);
+	impl::set_sign(result.m_sign, this->m_sign, right_side.m_sign, *this, right_side);
+	impl::delete_zeros_on_left(result);
+	return result;
+}
 
-// LinkedList<int> BigInteger::getList()const
-// {
-// 	return m_list;
-// }
+BigInteger BigInteger::operator-(BigInteger&& right_side)
+{
+	return *this - right_side;
+}
 
-// bool BigInteger::equal(BigInteger const& a_rhs)const
-// {
-// 	if(this == &a_rhs)
-// 	{
-// 		return true;
-// 	}
-// 	if(numOfDigits() != a_rhs.numOfDigits())
-// 	{
-// 		return false;
-// 	}
-// 	if(m_sign != a_rhs.m_sign)
-// 	{
-// 		return false;
-// 	}
-// 	BigInteger first = *this;
-// 	first.sub(a_rhs);
-// 	if(first.numOfDigits() == 1 && first.m_list.begin().data() == 0)
-// 	{
-// 		return true;
-// 	}
-// 	return false;
-// }
+BigInteger BigInteger::operator*(BigInteger& right_side)
+{
+	int carry = 0;
+	int padding_index = 0;
+	BigInteger temp;
+	BigInteger result("0");
+	auto first_end = this->m_big_int.end();
+	auto second_end = right_side.m_big_int.end();
+	auto second = impl::init_iterator(right_side.m_big_int);
 
-// bool BigInteger::notEqual(BigInteger const& a_rhs)const
-// {
-// 	return equal(a_rhs) == false;
-// } 
+	while (second != second_end)
+	{
+		impl::zeros_padding(temp.m_big_int, padding_index);
+		auto first = impl::init_iterator(this->m_big_int);
 
-// bool BigInteger::less(BigInteger const& a_rhs)const
-// {
-// 	if(m_sign < a_rhs.m_sign)
-// 	{
-// 		return true;
-// 	}
-// 	if(m_sign > a_rhs.m_sign)
-// 	{
-// 		return false;
-// 	}
-// 	if(m_sign == a_rhs.m_sign)
-// 	{
-// 		if(numOfDigits() < a_rhs.numOfDigits())
-// 		{
-// 			return true;
-// 		}
-// 		if(numOfDigits() > a_rhs.numOfDigits())
-// 		{
-// 			return false;
-// 		}
-// 	}
+		while(first != first_end)
+		{
+			temp.m_big_int.push_front(impl::enter((*second) * (*first) + carry));
+			carry = impl::remainder((*second) * (*first) + carry);
+			first--;
+		}
 
-// 	BigInteger first = *this;
-// 	first.sub(a_rhs);
-// 	if(first.m_sign == -1)
-// 	{
-// 		return true;
-// 	}
-// 	return false;
-// }
+		impl::close_iteration(temp, result, second, &carry, &padding_index);
+	}
 
-// bool BigInteger::greater(BigInteger const& a_rhs)const
-// {
-// 	return less(a_rhs) == false;
-// }
+	impl::delete_zeros_on_left(result);
+	impl::set_sign(result.m_sign, this->m_sign, right_side.m_sign);
+	impl::settle_zero_result_case(result);
+	return result;
+}
 
-// bool BigInteger::lessOrEqua (BigInteger const& a_rhs)const
-// {
-// 	return less(a_rhs) == true || equal(a_rhs) == true;
-// }
+BigInteger BigInteger::operator*(BigInteger&& right_side)
+{
+	return *this * right_side;
+}
 
-// bool BigInteger::greaterOrEqual(BigInteger const& a_rhs)const
-// {
-// 	return greater(a_rhs) == true || equal(a_rhs) == true;
-// }
 
-// BigInteger add(BigInteger const& a_lhs, BigInteger const& a_rhs)
-// {
-// 	BigInteger result = a_lhs;
-// 	result.add(a_rhs);
-// 	return result;
-// }
+long long int BigInteger::convert_big_int_to_long_long()
+{
+	int pos = 0;
+	long long int number = 0; 
+	auto end = this->m_big_int.end();
+	auto it = impl::init_iterator(this->m_big_int);
+	
+	while(it != end)
+	{
+		number += (*it)*(pow(10,pos));
+		pos++;
+		it--;
+	}
 
-// void add(BigInteger const& a_lhs, BigInteger const& a_rhs, BigInteger& a_sum)
-// {
-// 	a_sum.add(a_lhs);
-// 	a_sum.add(a_rhs);
-// }
-
-// BigInteger sub(BigInteger const& a_lhs, BigInteger const& a_rhs)
-// {
-// 	BigInteger result = a_lhs;
-// 	result.sub(a_rhs);
-// 	return result;
-// }
-
-// void sub(BigInteger const& a_lhs, BigInteger const& a_rhs, BigInteger& a_sum)
-// {
-// 	a_sum = a_lhs;
-// 	a_sum.sub(a_rhs);
-// }
-
-// BigInteger mul(BigInteger const& a_lhs, BigInteger const& a_rhs)
-// {
-// 	BigInteger result = a_lhs;
-// 	result.mul(a_rhs);
-// 	return result;
-// }
-
-// void mul(BigInteger const& a_lhs, BigInteger const& a_rhs, BigInteger& a_sum)
-// {
-// 	a_sum = a_lhs;
-// 	a_sum.mul(a_rhs);
-// }
-
-// bool equal(BigInteger const& a_rhs, BigInteger const& a_lhs)
-// {
-// 	return 	a_rhs.equal(a_lhs);
-// }
-
-// bool notEqual(BigInteger const& a_rhs, BigInteger const& a_lhs)
-// {
-// 	return 	a_rhs.notEqual(a_lhs);	
-// }
-
-// bool less(BigInteger const& a_rhs, BigInteger const& a_lhs)
-// {
-// 	return 	a_rhs.less(a_lhs);
-// }
-
-// bool greater(BigInteger const& a_rhs, BigInteger const& a_lhs)
-// {
-// 	return 	a_rhs.greater(a_lhs);
-// }
-
-// bool lessOrEqua(BigInteger const& a_rhs, BigInteger const& a_lhs)
-// {
-// 	return 	a_rhs.lessOrEqua(a_lhs);
-// }
-
-// bool greaterOrEqual(BigInteger const& a_rhs, BigInteger const& a_lhs)
-// {
-// 	return 	a_rhs.greaterOrEqual(a_lhs);
-// }
-
-// static int giveMeSign(long n)
-// {
-// 	if (n < 0)
-// 	{
-// 		return -1;
-// 	}
-// 	return 1;
-// }
-
-// static int convert2digit(char c)
-// {
-// 	return c - '0';
-// }
-
-// static int checkSign(char c)
-// {
-// 	if (c == '-')
-// 	{
-// 		return -1;
-// 	}
-// 	return 1;
-// }
-
-// static bool checkIfNumber(char c)
-// {
-// 	return isdigit(c);
-// }
-
-// static void zeroPadding(LinkedList<int>& a_first, LinkedList<int>& a_second)
-// {
-// 	int len;
-// 	if (a_first.size() > a_second.size())
-// 	{
-// 		len = a_first.size() - a_second.size();
-// 		for (int i = 0; i < len; i++)
-// 		{
-// 			a_second.add(0);
-// 		}
-// 	}
-// 	if (a_first.size() < a_second.size())
-// 	{
-// 		len = a_second.size() - a_first.size();
-// 		for (int i = 0; i < len; i++)
-// 		{
-// 			a_first.add(0);
-// 		}
-// 	}
-// }
-
-// static int enter(int n)
-// {
-// 	return n % 10;
-// }
-
-// static int remainder(int n)
-// {
-// 	return (n - enter(n)) / 10;
-// }
-
-// static void clean(LinkedList<int>& a_list)
-// {
-// 	size_t len = a_list.size();
-// 	for (size_t i = 0; i < len; i++)
-// 	{
-// 		a_list.remove();
-// 	}
-// }
-
-// static int checkSigns(int first, int second)
-// {
-// 	if ((first == 1) && (second == -1))
-// 	{
-// 		return -1;
-// 	}
-// 	if ((first == -1) && (second == 1))
-// 	{
-// 		return -1;
-// 	}
-
-// 	return 1;
-// }
-
-// static void swapArr(int* First, int* Second, int a_len)
-// {
-// 	int *temp = new int[a_len];
-// 	for (int i = a_len - 1; i >= 0; i--)
-// 	{
-// 		temp[i] = First[i];
-// 	}
-// 	for (int i = a_len - 1; i >= 0; i--)
-// 	{
-// 		First[i] = Second[i];
-// 	}
-// 	for (int i = a_len - 1; i >= 0; i--)
-// 	{
-// 		Second[i] = temp[i];
-// 	}
-// 	delete[] temp;
-// }
-
-// static int checkBiggest(int* First, int* Second, int a_len)
-// {
-// 	int i = a_len - 1;
-// 	if (First[i] > Second[i])
-// 	{
-// 		return 1;
-// 	}
-// 	else if (First[i] < Second[i])
-// 	{
-// 		swapArr(First, Second, a_len);
-// 		return -1;
-// 	}
-
-// 	for (; i > 0; i--)
-// 	{
-// 		if (First[i] > Second[i])
-// 		{
-// 			return 1;
-// 		}
-// 		else if (First[i] < Second[i])
-// 		{
-// 			swapArr(First, Second, a_len);
-// 			return -1;
-// 		}
-// 	}
-
-// 	return 0;
-// }
-
-// static void moveToArray(LinkedList<int> first, int* First, LinkedList<int> second, int* Second)
-// {
-// 	ListIterator<int> it = first.begin();
-// 	int i = 0;
-// 	while (it.notEqual(first.end()))
-// 	{
-// 		First[i] = it.data();
-// 		it.next();
-// 		i++;
-// 	}
-
-// 	it = second.begin();
-// 	i = 0;
-// 	while (it.notEqual(second.end()))
-// 	{
-// 		Second[i] = it.data();
-// 		it.next();
-// 		i++;
-// 	}
-// }
-
-// static void lend(int* First, int a_frome)
-// {
-// 	First[a_frome] += 10;
-// 	int i = a_frome + 1;
-// 	while (First[i] == 0)
-// 	{
-// 		First[i] = 9;
-// 		i++;
-// 	}
-// 	First[i] -= 1;
-// }
-
-// static void DeleteZeros(LinkedList<int>& a_list)
-// {
-// 	ListIterator<int> it;
-// 	while (true)
-// 	{
-// 		if (a_list.size() == 1)
-// 		{
-// 			return;
-// 		}
-// 		it = a_list.begin();
-// 		if (it.data() != 0)
-// 		{
-// 			return;
-// 		}
-// 		else
-// 		{
-// 			a_list.remove();
-// 		}
-// 	}
-// }
-
-// static void PutZeros(LinkedList<int>& a_list, int n)
-// {
-// 	for (int i = 0; i < n; i++)
-// 	{
-// 		a_list.add(0);
-// 	}
-// }
-
-// static char convert2char(int n)
-// {
-// 	return n + '0';
-// }
-
-// size_t BigInteger::numOfDigits()const
-// {
-// 	return m_list.size();
-// }
+	if(this->m_sign == NEGATIVE)
+		number*=-1;
+	return number;
+}
