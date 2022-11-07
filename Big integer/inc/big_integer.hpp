@@ -6,7 +6,10 @@
 #include <math.h>
 #include <iostream>
 #include <string.h>
+ #include <functional>
 
+namespace big_integer
+{
 
 #define POSITIVE true
 #define NEGATIVE false
@@ -15,6 +18,7 @@
 #define EQUALS 3
 
 using  BigIntList = std::list<int>;
+using Compare = std::function<bool(int, int)>;
 using  BigIntIterator = std::_List_iterator<int>;
 
 class BigInteger
@@ -42,16 +46,28 @@ public:
     BigInteger operator*(BigInteger& right_side);
     BigInteger operator*(BigInteger&& right_side);
 
-
-    size_t num_of_digits()const;
-    bool operator==(BigInteger const& right_side)const; 
-    bool operator<(BigInteger const& right_side)const;
+    bool operator==(BigInteger& right_side);
+    bool operator==(BigInteger&& right_side);
+    bool operator!=(BigInteger& right_side);
+    bool operator!=(BigInteger&& right_side);  
+    bool operator<(BigInteger& right_side);
+    bool operator<(BigInteger&& right_side);
+    bool operator>(BigInteger& right_side);
+    bool operator>(BigInteger&& right_side);
+    bool operator<=(BigInteger& right_side);
+    bool operator<=(BigInteger&& right_side);
+    bool operator>=(BigInteger& right_side);
+    bool operator>=(BigInteger&& right_side);
     
-    long long int convert_big_int_to_long_long(); // Warning - use only for numbers smaller than sizeof(long long int)
+    bool& sign();
+    size_t num_of_digits()const;
     friend  std::ostream& operator<<(std::ostream& a_os, BigInteger const& big_int);
+    long long int convert_big_int_to_long_long(); // Warning!!! use only for numbers smaller than sizeof(long long int)
 
-//private:
+private:
     bool m_sign;
     BigIntList m_big_int;
 };
 
+
+} //namespace big_integer

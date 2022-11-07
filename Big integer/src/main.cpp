@@ -5,6 +5,8 @@
 #define GREEN "\x1B[32m"
 #define RED "\x1B[91m"
 
+using namespace big_integer;
+
 void add(long long int a, long long int b)
 {
     BigInteger result = BigInteger(a) + BigInteger(b);
@@ -160,6 +162,10 @@ int main()
     mul(97898498, -0);
     mul(-0, 9684989849);
     mul(0, -84684989);
+
+    BigInteger x(50);
+    x = int(870);
+    std::cout << x << "\n";
 
     return 0;
 }
