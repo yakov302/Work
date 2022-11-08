@@ -12,7 +12,7 @@
 #define GREEN "\x1B[32m"
 #define RED "\x1B[91m"
 
-#define MAX_DEV 99999999999999999
+#define MAX_DEV 99999999999999
 #define MAX_ADD 99999999999999
 #define MAX_SUB 99999999999999
 #define MAX_MUL 9999999
@@ -261,10 +261,14 @@ void dev_test()
         long long int a = getRandom()%MAX_DEV;
         if(a%4 == 0)
             a *= -1;
+        if(a == 0)
+            a = 1;
 
         long long int b = getRandom()%MAX_DEV;
         if(b%4 == 0)
             b *= -1;
+        if(b == 0)
+            b = 1;
 
         if(!dev(a, b))
             return;
@@ -272,10 +276,16 @@ void dev_test()
 }
 int main()
 {
-    add_test();
+    //add_test();
     //sub_test();
     //mul_test();
-    //dev_test();
+    dev_test();
+
+    // BigInteger r = BigInteger(67935728716124759) / BigInteger(2);
+    // long long int res = r.convert_big_int_to_long_long();
+    //  std::cout << (res == 67935728716124759 / 2) << "\n";
+    // std::cout << res << "\n";
+    // std::cout << 67935728716124759 / 2 << "\n";
 
     return 0;
 }

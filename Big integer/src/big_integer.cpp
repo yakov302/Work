@@ -159,11 +159,30 @@ int compare(BigIntList& first, bool& first_sign, BigIntList& second, bool& secon
 		return who_is_bigger(first, second, lass);
 }
 
+bool is_i_am_zero(BigIntList& big_int)
+{
+	int count = 0;
+	auto it = big_int.begin();
+	auto end = big_int.end();
+	while(it != end)
+	{
+		count += *it;
+		if(count != 0)
+			return false;
+
+		it++;
+	}
+
+	return true;
+}
+
 bool set_first_and_second(BigIntIterator& first, BigIntIterator& second, BigIntIterator& first_end, BigIntIterator& second_end, BigIntList& self, BigIntList& right_side)
 {
 	int result = who_is_bigger(self, right_side, greater);
-
 	if(result == EQUALS)
+		return false;
+	
+	if(is_i_am_zero(self) && is_i_am_zero(right_side))
 		return false;
 
 	if(result == FIRST)
@@ -292,23 +311,6 @@ BigInteger make_add(BigInteger& self, bool& self_sign, BigInteger& right_side)
 	BigInteger result = self + right_side;
 	impl::flip_sign(result.sign());
 	return result;
-}
-
-bool is_i_am_zero(BigIntList& big_int)
-{
-	int count = 0;
-	auto it = big_int.begin();
-	auto end = big_int.end();
-	while(it != end)
-	{
-		count += *it;
-		if(count != 0)
-			return false;
-
-		it++;
-	}
-
-	return true;
 }
 
 bool one_of_them_is_zero(BigIntList& self, BigIntList& right_side)
