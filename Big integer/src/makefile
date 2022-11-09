@@ -11,8 +11,8 @@ LDLIBS   =
 CXXFLAGS = $(WARNINGS) $(DEBUG) -std=$(CXX_STD) $(LDLIBS)
 CPPFLAGS = -I$(INC_DIR)
 
-TARGET = main
-OBJS = ./main.o ./big_integer.o 
+TARGET = test
+OBJS = ./test.o ./big_integer.o 
 $(TARGET):$(OBJS)
 
 vala: $(TARGET)

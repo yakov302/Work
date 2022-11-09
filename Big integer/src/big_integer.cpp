@@ -117,8 +117,41 @@ void check_tail(BigIntIterator& first, BigIntIterator& first_end, BigIntList& re
 	}
 }
 
+bool is_i_am_zero(BigIntList& big_int)
+{
+	int count = 0;
+	auto it = big_int.begin();
+	auto end = big_int.end();
+	while(it != end)
+	{
+		count += *it;
+		if(count != 0)
+			return false;
+
+		it++;
+	}
+
+	return true;
+}
+
+void delete_zeros_on_left(BigIntList& result)
+{
+	auto it = result.begin();
+	auto end = result.end();
+	while(it != end)
+	{
+		if(*it == 0)
+			it = result.erase(it);
+		else
+			break;
+	}
+}
+
 int who_is_bigger(BigIntList& first, BigIntList& second, Compare& compare)
 {
+	delete_zeros_on_left(first);
+	delete_zeros_on_left(second);
+
 	if(compare((int)first.size(), second.size()))
 		return FIRST;
 
@@ -157,23 +190,6 @@ int compare(BigIntList& first, bool& first_sign, BigIntList& second, bool& secon
 		return who_is_bigger(first, second, greater);
 	else
 		return who_is_bigger(first, second, lass);
-}
-
-bool is_i_am_zero(BigIntList& big_int)
-{
-	int count = 0;
-	auto it = big_int.begin();
-	auto end = big_int.end();
-	while(it != end)
-	{
-		count += *it;
-		if(count != 0)
-			return false;
-
-		it++;
-	}
-
-	return true;
 }
 
 bool set_first_and_second(BigIntIterator& first, BigIntIterator& second, BigIntIterator& first_end, BigIntIterator& second_end, BigIntList& self, BigIntList& right_side)
@@ -256,17 +272,10 @@ void set_dev_sign(bool& result_sign, bool& self_sign, bool& right_side_sign)
 	self_sign = POSITIVE;
 }
 
-void delete_zeros_on_left(BigIntList& result)
+void set_mod_sign(bool& self_sign, bool& right_side_sign)
 {
-	auto it = result.begin();
-	auto end = result.end();
-	while(it != end)
-	{
-		if(*it == 0)
-			it = result.erase(it);
-		else
-			break;
-	}
+	self_sign = POSITIVE;
+	right_side_sign = POSITIVE;
 }
 
 void flip_sign(bool& big_int_sign)
@@ -344,6 +353,26 @@ bool special_cases(BigIntList& self, bool& self_sign, BigIntList& right_side, bo
 		return true;
 	}
 		
+	return false;
+}
+
+bool special_cases(BigInteger& self, BigInteger& right_side, BigInteger& result)
+{
+	if(right_side  ==  BigInteger("0"))
+		throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
+
+	if(self < right_side)
+	{
+		result = self;
+		return true;
+	}
+
+	if(self == right_side)
+	{
+		result = BigInteger("0");
+		return true;
+	}
+
 	return false;
 }
 
@@ -687,6 +716,28 @@ BigInteger BigInteger::operator/(std::string& right_side)
 BigInteger BigInteger::operator/(std::string&& right_side)
 {
 	return *this / BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%(BigInteger& right_side)
+{
+	BigInteger result;
+	bool self_sign = this->m_sign;
+	impl::set_mod_sign(this->m_sign, right_side.m_sign);
+	if(impl::special_cases(*this, right_side, result))
+	{
+		result.m_sign = self_sign;
+		return result;
+	}
+
+	BigInteger dev = *this/right_side;
+	result = *this - (dev*right_side);
+	result.m_sign = self_sign;
+	return result;
+}
+
+BigInteger BigInteger::operator%(BigInteger&& right_side)
+{
+	return *this % right_side;
 }
 
 bool BigInteger::operator==(BigInteger& right_side)

@@ -68,6 +68,9 @@ public:
     BigInteger operator/(BigInteger& right_side);
     BigInteger operator/(BigInteger&& right_side);
 
+    BigInteger operator%(BigInteger& right_side);
+    BigInteger operator%(BigInteger&& right_side);
+
     bool operator==(BigInteger& right_side);
     bool operator==(BigInteger&& right_side);
     bool operator!=(BigInteger& right_side);

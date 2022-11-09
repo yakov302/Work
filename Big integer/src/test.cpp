@@ -12,9 +12,7 @@
 #define GREEN "\x1B[32m"
 #define RED "\x1B[91m"
 
-#define MAX_DEV 99999999999999
-#define MAX_ADD 99999999999999
-#define MAX_SUB 99999999999999
+#define MAX_NUM 99999999999999
 #define MAX_MUL 9999999
 
 using namespace big_integer;
@@ -103,6 +101,16 @@ long long int getRandom()
     return distr(eng);
 };
 
+long long int generate_modulo(long long max_value)
+{
+    long long int modulo = getRandom()%max_value;
+    if(modulo%6 == 0)
+        modulo = getRandom()%1000;
+    if(modulo == 0)
+        modulo = 1;
+    return modulo;
+}
+
 bool add(long long int a, long long int b)
 {
     BigInteger result = BigInteger(a) + BigInteger(b);
@@ -132,11 +140,13 @@ void add_test()
 
     while(true)
     {
-        long long int a = getRandom()%MAX_ADD;
+        long long int modulo = generate_modulo(MAX_NUM);
+        long long int a = getRandom()%modulo;
         if(a%4 == 0)
             a *= -1;
 
-        long long int b = getRandom()%MAX_ADD;
+        modulo = generate_modulo(MAX_NUM);
+        long long int b = getRandom()%modulo;
         if(b%4 == 0)
             b *= -1;
 
@@ -174,11 +184,13 @@ void sub_test()
 
     while(true)
     {
-        long long int a = getRandom()%MAX_SUB;
+        long long int modulo = generate_modulo(MAX_NUM);
+        long long int a = getRandom()%modulo;
         if(a%4 == 0)
             a *= -1;
 
-        long long int b = getRandom()%MAX_SUB;
+        modulo = generate_modulo(MAX_NUM);
+        long long int b = getRandom()%modulo;
         if(b%4 == 0)
             b *= -1;
 
@@ -216,11 +228,13 @@ void mul_test()
 
     while(true)
     {
-        long long int a = getRandom()%MAX_MUL;
+        long long int modulo = generate_modulo(MAX_MUL);
+        long long int a = getRandom()%modulo;
         if(a%4 == 0)
             a *= -1;
 
-        long long int b = getRandom()%MAX_MUL;
+        modulo = generate_modulo(MAX_MUL);
+        long long int b = getRandom()%modulo;
         if(b%4 == 0)
             b *= -1;
 
@@ -258,13 +272,14 @@ void dev_test()
 
     while(true)
     {
-        long long int a = getRandom()%MAX_DEV;
+        long long int modulo = generate_modulo(MAX_NUM);
+        long long int a = getRandom()%modulo;
         if(a%4 == 0)
             a *= -1;
-        if(a == 0)
-            a = 1;
 
-        long long int b = getRandom()%MAX_DEV;
+
+        modulo = generate_modulo(MAX_NUM);
+        long long int b = getRandom()%modulo;
         if(b%4 == 0)
             b *= -1;
         if(b == 0)
@@ -274,18 +289,62 @@ void dev_test()
             return;
     }
 }
+
+bool mod(long long int a, long long int b)
+{
+    BigInteger result = BigInteger(a) % BigInteger(b);
+    if(result.convert_big_int_to_long_long() == a%b)
+    {
+        std::cout << GREEN;
+        std::cout << "PASS!!!\n";
+        std::cout << NORMAL;
+        std::cout << a << " % " << b << " = " << result << "\n\n";
+        return true;
+    }
+    else
+    {
+        std::cout << RED;
+        std::cout << "FAIL!!!\n";
+        std::cout << NORMAL;
+        std::cout << a << " % " << b << " = " << result << "\n\n";
+        return false;
+    }
+}
+
+void mod_test()
+{
+    std::cout << YELLOW;
+    std::cout << "\n***mod tests***" << "\n\n";
+    std::cout << NORMAL;
+
+    while(true)
+    {
+        long long int modulo = generate_modulo(MAX_NUM);
+        long long int a = getRandom()%modulo;
+        if(a%4 == 0)
+            a *= -1;
+
+
+        modulo = generate_modulo(MAX_NUM);
+        long long int b = getRandom()%modulo;
+        if(b%4 == 0)
+            b *= -1;
+        if(b == 0)
+            b = 1;
+
+        if(!mod(a, b))
+            return;
+    }
+}
+
 int main()
 {
-    //add_test();
-    //sub_test();
-    //mul_test();
-    dev_test();
-
-    // BigInteger r = BigInteger(67935728716124759) / BigInteger(2);
-    // long long int res = r.convert_big_int_to_long_long();
-    //  std::cout << (res == 67935728716124759 / 2) << "\n";
-    // std::cout << res << "\n";
-    // std::cout << 67935728716124759 / 2 << "\n";
+    // contractor_test();
+    // add_test();
+    // sub_test();
+    // mul_test();
+    // dev_test();
+    mod_test();
 
     return 0;
 }
