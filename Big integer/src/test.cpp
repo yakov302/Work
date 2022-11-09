@@ -1,5 +1,7 @@
 #include <iostream>
-#include <stdlib.h>  
+#include <iostream>
+#include <stdlib.h> 
+#include <cmath>
 #include <math.h>
 #include <time.h>     
 #include <random>
@@ -337,6 +339,53 @@ void mod_test()
     }
 }
 
+bool power(long long int a, long long int b)
+{
+    BigInteger result = BigInteger(a) ^ BigInteger(b);
+    if(result.convert_big_int_to_long_long() == (long long int)pow(a, b))
+    {
+        std::cout << GREEN;
+        std::cout << "PASS!!!\n";
+        std::cout << NORMAL;
+        std::cout << a << " ^ " << b << " = " << result << "\n\n";
+        return true;
+    }
+    else
+    {
+        std::cout << RED;
+        std::cout << "FAIL!!!\n";
+        std::cout << NORMAL;
+        std::cout << a << " ^ " << b << " = " << result << "\n\n";
+        return false;
+    }
+}
+
+void pow_test()
+{
+    std::cout << YELLOW;
+    std::cout << "\n***pow tests***" << "\n\n";
+    std::cout << NORMAL;
+
+    while(true)
+    {
+        long long int a = getRandom()%400;
+        if(a%4 == 0)
+            a *= -1;
+
+        long long int b = getRandom()%7;
+        if(b%4 == 0)
+            b *= -1;
+        if(b == 0)
+            b = 1;
+
+        if(a == 0 && b < 0)
+            a = 1;
+
+        if(!power(a, b))
+            return;
+    }
+}
+
 int main()
 {
     // contractor_test();
@@ -344,7 +393,8 @@ int main()
     // sub_test();
     // mul_test();
     // dev_test();
-    mod_test();
-
+    // mod_test();
+    pow_test();
+    
     return 0;
 }

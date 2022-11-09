@@ -68,8 +68,67 @@ public:
     BigInteger operator/(BigInteger& right_side);
     BigInteger operator/(BigInteger&& right_side);
 
+    BigInteger operator%(const char* right_side);
+    BigInteger operator%(long long int right_side);
+    BigInteger operator%(std::string& right_side);
+    BigInteger operator%(std::string&& right_side);
     BigInteger operator%(BigInteger& right_side);
     BigInteger operator%(BigInteger&& right_side);
+
+    //power operator
+    BigInteger operator^(const char* right_side);
+    BigInteger operator^(long long int right_side);
+    BigInteger operator^(std::string& right_side);
+    BigInteger operator^(std::string&& right_side);
+    BigInteger operator^(BigInteger& right_side);  
+    BigInteger operator^(BigInteger&& right_side);
+
+    BigInteger operator++();
+    BigInteger operator--();  
+    BigInteger operator++(int); 
+    BigInteger operator--(int);  
+
+    BigInteger operator+=(const char* right_side);
+    BigInteger operator+=(long long int right_side);
+    BigInteger operator+=(std::string& right_side);
+    BigInteger operator+=(std::string&& right_side);
+    BigInteger operator+=(BigInteger& right_side);
+    BigInteger operator+=(BigInteger&& right_side);
+
+    BigInteger operator-=(const char* right_side);
+    BigInteger operator-=(long long int right_side);
+    BigInteger operator-=(std::string& right_side);
+    BigInteger operator-=(std::string&& right_side);
+    BigInteger operator-=(BigInteger& right_side);
+    BigInteger operator-=(BigInteger&& right_side);
+
+    BigInteger operator*=(const char* right_side);
+    BigInteger operator*=(long long int right_side);
+    BigInteger operator*=(std::string& right_side);
+    BigInteger operator*=(std::string&& right_side);
+    BigInteger operator*=(BigInteger& right_side);
+    BigInteger operator*=(BigInteger&& right_side);
+
+    BigInteger operator/=(const char* right_side);
+    BigInteger operator/=(long long int right_side);
+    BigInteger operator/=(std::string& right_side);
+    BigInteger operator/=(std::string&& right_side);
+    BigInteger operator/=(BigInteger& right_side);
+    BigInteger operator/=(BigInteger&& right_side);
+
+    BigInteger operator%=(const char* right_side);
+    BigInteger operator%=(long long int right_side);
+    BigInteger operator%=(std::string& right_side);
+    BigInteger operator%=(std::string&& right_side);
+    BigInteger operator%=(BigInteger& right_side);
+    BigInteger operator%=(BigInteger&& right_side);
+
+    BigInteger operator^=(const char* right_side);
+    BigInteger operator^=(long long int right_side);
+    BigInteger operator^=(std::string& right_side);
+    BigInteger operator^=(std::string&& right_side);
+    BigInteger operator^=(BigInteger& right_side);
+    BigInteger operator^=(BigInteger&& right_side);
 
     bool operator==(BigInteger& right_side);
     bool operator==(BigInteger&& right_side);

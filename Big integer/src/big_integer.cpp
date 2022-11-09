@@ -376,6 +376,44 @@ bool special_cases(BigInteger& self, BigInteger& right_side, BigInteger& result)
 	return false;
 }
 
+bool special_cases(bool right_side_sign, BigInteger& result, BigInteger& self, BigInteger& right_side)
+{
+	if(self == BigInteger("1"))
+	{
+		result = BigInteger("1");
+		return true;
+	}
+
+	if(self == BigInteger("-1"))
+	{
+		result = BigInteger("-1");
+		return true;
+	}
+
+	if(right_side_sign == NEGATIVE)
+	{
+		if(self == BigInteger("0"))
+			throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
+		
+		result = BigInteger("0");
+		return true;
+	}
+	
+	if(right_side == BigInteger("0"))
+	{
+		result = BigInteger("1");
+		return true;
+	}
+	
+	if(right_side == BigInteger("1"))
+	{
+		result = self;
+		return true;
+	}
+
+	return false;
+}
+
 bool divide_temp_self_by_right_side(BigInteger& temp_self, BigInteger& right_side, BigInteger& temp_result, bool first_iteration)
 {
 	if(right_side > temp_self && first_iteration)
@@ -738,6 +776,273 @@ BigInteger BigInteger::operator%(BigInteger& right_side)
 BigInteger BigInteger::operator%(BigInteger&& right_side)
 {
 	return *this % right_side;
+}
+
+BigInteger BigInteger::operator%(const char* right_side)
+{
+	return *this % BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%(long long int right_side)
+{
+	return *this % BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%(std::string& right_side)
+{
+	return *this % BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%(std::string&& right_side)
+{
+	return *this % BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^(BigInteger& right_side)
+{
+	BigInteger result(1);
+	if(impl::special_cases(right_side.m_sign, result, *this, right_side))
+		return result;
+
+	BigInteger counter("0");
+	while(counter < right_side)
+	{
+		result = result * *this;
+		counter = counter + 1;
+	}
+
+	return result;
+}
+
+BigInteger BigInteger::operator^(BigInteger&& right_side)
+{
+	return *this ^ right_side;
+}
+
+BigInteger BigInteger::operator^(const char* right_side)
+{
+	return *this ^ BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^(long long int right_side)
+{
+	return *this ^ BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^(std::string& right_side)
+{
+	return *this ^ BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^(std::string&& right_side)
+{
+	return *this ^ BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator++()
+{
+	*this = *this + 1;
+	return *this;
+}
+
+BigInteger BigInteger::operator++(int)
+{
+	BigInteger pre = *this;
+	*this = *this + 1;
+	return pre;
+}
+
+BigInteger BigInteger::operator--()
+{
+	*this = *this - 1;
+	return *this;
+}
+
+BigInteger BigInteger::operator--(int)
+{
+	BigInteger pre = *this;
+	*this = *this - 1;
+	return pre;
+}
+
+BigInteger BigInteger::operator+=(BigInteger& right_side)
+{
+	return *this = *this + right_side;
+}
+
+BigInteger BigInteger::operator+=(BigInteger&& right_side)
+{
+	return *this += right_side;
+}
+
+BigInteger BigInteger::operator+=(const char* right_side)
+{
+	return *this += BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator+=(long long int right_side)
+{
+	return *this += BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator+=(std::string& right_side)
+{
+	return *this += BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator+=(std::string&& right_side)
+{
+	return *this += BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator-=(BigInteger& right_side)
+{
+	return *this = *this - right_side;
+}
+
+BigInteger BigInteger::operator-=(BigInteger&& right_side)
+{
+	return *this -= right_side;
+}
+
+BigInteger BigInteger::operator-=(const char* right_side)
+{
+	return *this -= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator-=(long long int right_side)
+{
+	return *this -= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator-=(std::string& right_side)
+{
+	return *this -= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator-=(std::string&& right_side)
+{
+	return *this -= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator*=(BigInteger& right_side)
+{
+	return *this = (*this) * right_side;
+}
+
+BigInteger BigInteger::operator*=(BigInteger&& right_side)
+{
+	return *this *= right_side;
+}
+
+BigInteger BigInteger::operator*=(const char* right_side)
+{
+	return *this *= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator*=(long long int right_side)
+{
+	return *this *= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator*=(std::string& right_side)
+{
+	return *this *= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator*=(std::string&& right_side)
+{
+	return *this *= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator/=(BigInteger& right_side)
+{
+	return *this = (*this) / right_side;
+}
+
+BigInteger BigInteger::operator/=(BigInteger&& right_side)
+{
+	return *this /= right_side;
+}
+
+BigInteger BigInteger::operator/=(const char* right_side)
+{
+	return *this /= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator/=(long long int right_side)
+{
+	return *this /= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator/=(std::string& right_side)
+{
+	return *this /= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator/=(std::string&& right_side)
+{
+	return *this /= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%=(BigInteger& right_side)
+{
+	return *this = (*this) % right_side;
+}
+
+BigInteger BigInteger::operator%=(BigInteger&& right_side)
+{
+	return *this %= right_side;
+}
+
+BigInteger BigInteger::operator%=(const char* right_side)
+{
+	return *this %= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%=(long long int right_side)
+{
+	return *this %= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%=(std::string& right_side)
+{
+	return *this %= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator%=(std::string&& right_side)
+{
+	return *this %= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^=(BigInteger& right_side)
+{
+	return *this = (*this) ^ right_side;
+}
+
+BigInteger BigInteger::operator^=(BigInteger&& right_side)
+{
+	return *this ^= right_side;
+}
+
+BigInteger BigInteger::operator^=(const char* right_side)
+{
+	return *this ^= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^=(long long int right_side)
+{
+	return *this ^= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^=(std::string& right_side)
+{
+	return *this ^= BigInteger(right_side);
+}
+
+BigInteger BigInteger::operator^=(std::string&& right_side)
+{
+	return *this ^= BigInteger(right_side);
 }
 
 bool BigInteger::operator==(BigInteger& right_side)
