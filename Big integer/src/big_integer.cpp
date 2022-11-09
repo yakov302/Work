@@ -147,7 +147,7 @@ void delete_zeros_on_left(BigIntList& result)
 	}
 }
 
-int who_is_bigger(BigIntList& first, BigIntList& second, Compare& compare)
+int length_comparison(BigIntList& first, BigIntList& second, Compare& compare)
 {
 	delete_zeros_on_left(first);
 	delete_zeros_on_left(second);
@@ -187,14 +187,14 @@ int compare(BigIntList& first, bool& first_sign, BigIntList& second, bool& secon
 	}
 
 	if(first_sign == POSITIVE)
-		return who_is_bigger(first, second, greater);
+		return length_comparison(first, second, greater);
 	else
-		return who_is_bigger(first, second, lass);
+		return length_comparison(first, second, lass);
 }
 
 bool set_first_and_second(BigIntIterator& first, BigIntIterator& second, BigIntIterator& first_end, BigIntIterator& second_end, BigIntList& self, BigIntList& right_side)
 {
-	int result = who_is_bigger(self, right_side, greater);
+	int result = length_comparison(self, right_side, greater);
 	if(result == EQUALS)
 		return false;
 	
@@ -239,7 +239,7 @@ void lend(BigIntIterator first, BigIntIterator& second)
 
 void set_sign(bool& result_sign, bool& self_sign, bool& right_side_sign, BigIntList& self, BigIntList& right_side)
 {
-	int result = who_is_bigger(self, right_side, greater);
+	int result = length_comparison(self, right_side, greater);
 	if(result == FIRST)
 	{
 		if(self_sign == NEGATIVE && right_side_sign == NEGATIVE)
@@ -278,6 +278,18 @@ void set_mod_sign(bool& self_sign, bool& right_side_sign)
 	right_side_sign = POSITIVE;
 }
 
+void set_sign_back(bool& self, bool& right_side, bool self_sign, bool right_side_sign)
+{
+	self = self_sign;
+	right_side = right_side_sign;
+}
+
+void set_mod_sign_back(bool& self, bool& right_side, bool& result, bool self_sign, bool right_side_sign)
+{
+	set_sign_back(self, right_side, self_sign, right_side_sign);
+	result = self_sign;
+}
+
 void flip_sign(bool& big_int_sign)
 {
 	if(big_int_sign == NEGATIVE)
@@ -310,6 +322,7 @@ BigInteger make_sub(BigInteger& self, bool& self_sign, BigInteger& right_side)
 {
 	impl::flip_sign(self_sign);
 	BigInteger result = self - right_side;
+	impl::flip_sign(self_sign);
 	impl::flip_sign(result.sign());
 	return result;
 }
@@ -318,6 +331,7 @@ BigInteger make_add(BigInteger& self, bool& self_sign, BigInteger& right_side)
 {
 	impl::flip_sign(self_sign);
 	BigInteger result = self + right_side;
+	impl::flip_sign(self_sign);
 	impl::flip_sign(result.sign());
 	return result;
 }
@@ -335,16 +349,16 @@ bool special_cases(BigIntList& self, bool& self_sign, BigIntList& right_side, bo
 	BigIntList zero;
 	zero.push_back(0);
 
-	if(who_is_bigger(zero, right_side, greater) == EQUALS)
+	if(length_comparison(zero, right_side, greater) == EQUALS)
 		throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
 
-	if(who_is_bigger(self, right_side, greater) == SECOND)
+	if(length_comparison(self, right_side, greater) == SECOND)
 	{
 		result = BigInteger("0");
 		return true;
 	}
 
-	if(who_is_bigger(self, right_side, greater) == EQUALS)
+	if(length_comparison(self, right_side, greater) == EQUALS)
 	{
 		if(self_sign == right_side_sign)
 			result = BigInteger("1");
@@ -376,7 +390,7 @@ bool special_cases(BigInteger& self, BigInteger& right_side, BigInteger& result)
 	return false;
 }
 
-bool special_cases(bool right_side_sign, BigInteger& result, BigInteger& self, BigInteger& right_side)
+bool special_cases_pow(bool right_side_sign, BigInteger& result, BigInteger& self, BigInteger& right_side)
 {
 	if(self == BigInteger("1"))
 	{
@@ -414,6 +428,17 @@ bool special_cases(bool right_side_sign, BigInteger& result, BigInteger& self, B
 	return false;
 }
 
+bool special_cases(BigInteger& self)
+{
+	if(self < BigInteger("0"))
+		throw std::runtime_error(std::string("ERROR: invalid negative number!"));
+
+	if(self == BigInteger("0") || self == BigInteger("1"))
+		return true;
+	
+	return false;
+}
+
 bool divide_temp_self_by_right_side(BigInteger& temp_self, BigInteger& right_side, BigInteger& temp_result, bool first_iteration)
 {
 	if(right_side > temp_self && first_iteration)
@@ -441,9 +466,25 @@ void concatenate(BigIntList& result, BigIntList& temp_result)
 		result.push_back(digit);
 }
 
+bool is_i_am_root(BigInteger& root, BigInteger& number, BigInteger& upper, BigInteger& lower)
+{
+	if((root^BigInteger(2)) > number)
+	{
+		upper = root;
+		return false;
+	}
+
+	if((root^BigInteger(2)) < number)
+	{
+		lower = root;
+		return false;
+	}
+
+	return true;
+}
+
 
 }// impl namespace
-
 
 BigInteger::BigInteger()
 : m_sign(POSITIVE)
@@ -598,8 +639,9 @@ BigInteger BigInteger::operator-(BigInteger& right_side)
 	BigIntIterator second;
 	BigIntIterator first_end;
 	BigIntIterator second_end;
+	BigInteger self = *this;
 
-	if(!impl::set_first_and_second(first, second, first_end, second_end, this->m_big_int, right_side.m_big_int))
+	if(!impl::set_first_and_second(first, second, first_end, second_end, self.m_big_int, right_side.m_big_int))
 		return BigInteger("0");
 
 	while (first != first_end && second != second_end)
@@ -701,16 +743,18 @@ BigInteger BigInteger::operator*(std::string&& right_side)
 BigInteger BigInteger::operator/(BigInteger& right_side)
 {
 	BigInteger result;
-	impl::set_dev_sign(result.m_sign, this->m_sign, right_side.m_sign);
 	if(impl::special_cases(this->m_big_int, this->m_sign, right_side.m_big_int, right_side.m_sign, result))
 		return result;
-	
+
 	BigInteger temp_self;
 	BigInteger temp_result;
 	BigInteger temp_result_mul_right_side;
 	auto it = this->m_big_int.begin();
 	auto end = this->m_big_int.end();
 	bool first_iteration = true;
+	bool self_sign = this->m_sign;
+	bool right_side_sign = right_side.m_sign;
+	impl::set_dev_sign(result.m_sign, this->m_sign, right_side.m_sign);
 
 	while(it != end)
 	{
@@ -728,6 +772,7 @@ BigInteger BigInteger::operator/(BigInteger& right_side)
 		++it;
 	}
 
+	impl::set_sign_back(this->m_sign, right_side.m_sign, self_sign, right_side_sign);
 	return result;
 }
 
@@ -760,16 +805,18 @@ BigInteger BigInteger::operator%(BigInteger& right_side)
 {
 	BigInteger result;
 	bool self_sign = this->m_sign;
+	bool right_side_sign = right_side.m_sign;
 	impl::set_mod_sign(this->m_sign, right_side.m_sign);
 	if(impl::special_cases(*this, right_side, result))
 	{
-		result.m_sign = self_sign;
+		impl::set_mod_sign_back(this->m_sign, right_side.m_sign, result.m_sign, self_sign, right_side_sign);
 		return result;
-	}
+	}		
 
 	BigInteger dev = *this/right_side;
-	result = *this - (dev*right_side);
-	result.m_sign = self_sign;
+	result = (*this) - (dev*right_side);
+
+	impl::set_mod_sign_back(this->m_sign, right_side.m_sign, result.m_sign, self_sign, right_side_sign);
 	return result;
 }
 
@@ -801,13 +848,13 @@ BigInteger BigInteger::operator%(std::string&& right_side)
 BigInteger BigInteger::operator^(BigInteger& right_side)
 {
 	BigInteger result(1);
-	if(impl::special_cases(right_side.m_sign, result, *this, right_side))
+	if(impl::special_cases_pow(right_side.m_sign, result, *this, right_side))
 		return result;
 
 	BigInteger counter("0");
 	while(counter < right_side)
 	{
-		result = result * *this;
+		result = result * (*this);
 		counter = counter + 1;
 	}
 
@@ -837,6 +884,26 @@ BigInteger BigInteger::operator^(std::string& right_side)
 BigInteger BigInteger::operator^(std::string&& right_side)
 {
 	return *this ^ BigInteger(right_side);
+}
+
+BigInteger BigInteger::square_root()
+{
+	if(impl::special_cases(*this))
+		return *this;
+
+    BigInteger lower("1");
+    BigInteger upper = *this;
+	BigInteger root = *this/2;
+
+	while((upper - lower) > "1")
+	{
+		if(impl::is_i_am_root(root, *this, upper, lower))
+			break;
+
+		root = lower + ((upper - lower)/BigInteger(2));
+	}
+
+	return root;
 }
 
 BigInteger BigInteger::operator++()
@@ -1058,6 +1125,26 @@ bool BigInteger::operator==(BigInteger&& right_side)
 	return *this == right_side;
 }
 
+bool BigInteger::operator==(const char* right_side)
+{
+	return *this == BigInteger(right_side);
+}
+
+bool BigInteger::operator==(long long int right_side)
+{
+	return *this == BigInteger(right_side);
+}
+
+bool BigInteger::operator==(std::string& right_side)
+{
+	return *this == BigInteger(right_side);
+}
+
+bool BigInteger::operator==(std::string&& right_side)
+{
+	return *this == BigInteger(right_side);
+}
+
 bool BigInteger::operator!=(BigInteger& right_side)
 {
 	return !(*this == right_side);
@@ -1065,7 +1152,27 @@ bool BigInteger::operator!=(BigInteger& right_side)
 
 bool BigInteger::operator!=(BigInteger&& right_side)
 {
-	return !(*this == right_side);
+	return *this != right_side;
+}
+
+bool BigInteger::operator!=(const char* right_side)
+{
+	return *this != BigInteger(right_side);
+}
+
+bool BigInteger::operator!=(long long int right_side)
+{
+	return *this != BigInteger(right_side);
+}
+
+bool BigInteger::operator!=(std::string& right_side)
+{
+	return *this != BigInteger(right_side);
+}
+
+bool BigInteger::operator!=(std::string&& right_side)
+{
+	return *this != BigInteger(right_side);
 }
 
 bool BigInteger::operator<(BigInteger& right_side)
@@ -1081,6 +1188,26 @@ bool BigInteger::operator<(BigInteger&& right_side)
 	return *this < right_side;
 }
 
+bool BigInteger::operator<(const char* right_side)
+{
+	return *this < BigInteger(right_side);
+}
+
+bool BigInteger::operator<(long long int right_side)
+{
+	return *this < BigInteger(right_side);
+}
+
+bool BigInteger::operator<(std::string& right_side)
+{
+	return *this < BigInteger(right_side);
+}
+
+bool BigInteger::operator<(std::string&& right_side)
+{
+	return *this < BigInteger(right_side);
+}
+
 bool BigInteger::operator>(BigInteger& right_side)
 {
 	if(impl::compare(this->m_big_int, this->m_sign, right_side.m_big_int, right_side.m_sign) != FIRST)
@@ -1094,24 +1221,84 @@ bool BigInteger::operator>(BigInteger&& right_side)
 	return *this > right_side;
 }
 
+bool BigInteger::operator>(const char* right_side)
+{
+	return *this > BigInteger(right_side);
+}
+
+bool BigInteger::operator>(long long int right_side)
+{
+	return *this > BigInteger(right_side);
+}
+
+bool BigInteger::operator>(std::string& right_side)
+{
+	return *this > BigInteger(right_side);
+}
+
+bool BigInteger::operator>(std::string&& right_side)
+{
+	return *this > BigInteger(right_side);
+}
+
 bool BigInteger::operator<=(BigInteger& right_side)
 {
-	return(*this < right_side || *this == right_side);
+	return (*this < right_side || *this == right_side);
 }
 
 bool BigInteger::operator<=(BigInteger&& right_side)
 {
-	return(*this < right_side || *this == right_side);
+	return *this <= right_side;
+}
+
+bool BigInteger::operator<=(const char* right_side)
+{
+	return *this <= BigInteger(right_side);
+}
+
+bool BigInteger::operator<=(long long int right_side)
+{
+	return *this <= BigInteger(right_side);
+}
+
+bool BigInteger::operator<=(std::string& right_side)
+{
+	return *this <= BigInteger(right_side);
+}
+
+bool BigInteger::operator<=(std::string&& right_side)
+{
+	return *this <= BigInteger(right_side);
 }
 
 bool BigInteger::operator>=(BigInteger& right_side)
 {
-	return(*this > right_side || *this == right_side);
+	return (*this > right_side || *this == right_side);
 }
 
 bool BigInteger::operator>=(BigInteger&& right_side)
 {
-	return(*this > right_side || *this == right_side);
+	return *this >= right_side;
+}
+
+bool BigInteger::operator>=(const char* right_side)
+{
+	return *this >= BigInteger(right_side);
+}
+
+bool BigInteger::operator>=(long long int right_side)
+{
+	return *this >= BigInteger(right_side);
+}
+
+bool BigInteger::operator>=(std::string& right_side)
+{
+	return *this >= BigInteger(right_side);
+}
+
+bool BigInteger::operator>=(std::string&& right_side)
+{
+	return *this >= BigInteger(right_side);
 }
 
 std::ostream& operator<<(std::ostream& a_os, BigInteger const& big_int)

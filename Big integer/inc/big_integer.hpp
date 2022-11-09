@@ -2,11 +2,10 @@
 
 #include <list>
 #include <string>
-#include <vector>
 #include <math.h>
+#include <cstring>
 #include <iostream>
-#include <string.h>
- #include <functional>
+#include <functional>
 
 namespace big_integer
 {
@@ -18,7 +17,7 @@ namespace big_integer
 #define EQUALS 3
 
 using  BigIntList = std::list<int>;
-using Compare = std::function<bool(int, int)>;
+using  Compare = std::function<bool(int, int)>;
 using  BigIntIterator = std::_List_iterator<int>;
 
 class BigInteger
@@ -75,13 +74,14 @@ public:
     BigInteger operator%(BigInteger& right_side);
     BigInteger operator%(BigInteger&& right_side);
 
-    //power operator
     BigInteger operator^(const char* right_side);
     BigInteger operator^(long long int right_side);
     BigInteger operator^(std::string& right_side);
     BigInteger operator^(std::string&& right_side);
     BigInteger operator^(BigInteger& right_side);  
     BigInteger operator^(BigInteger&& right_side);
+
+    BigInteger square_root();
 
     BigInteger operator++();
     BigInteger operator--();  
@@ -130,16 +130,45 @@ public:
     BigInteger operator^=(BigInteger& right_side);
     BigInteger operator^=(BigInteger&& right_side);
 
+    bool operator==(const char* right_side);
+    bool operator==(long long int right_side);
+    bool operator==(std::string& right_side);
+    bool operator==(std::string&& right_side);
     bool operator==(BigInteger& right_side);
     bool operator==(BigInteger&& right_side);
+
+    bool operator!=(const char* right_side);
+    bool operator!=(long long int right_side);
+    bool operator!=(std::string& right_side);
+    bool operator!=(std::string&& right_side);
     bool operator!=(BigInteger& right_side);
-    bool operator!=(BigInteger&& right_side);  
+    bool operator!=(BigInteger&& right_side);
+
+    bool operator<(const char* right_side);
+    bool operator<(long long int right_side);
+    bool operator<(std::string& right_side);
+    bool operator<(std::string&& right_side);
     bool operator<(BigInteger& right_side);
     bool operator<(BigInteger&& right_side);
+
+    bool operator>(const char* right_side);
+    bool operator>(long long int right_side);
+    bool operator>(std::string& right_side);
+    bool operator>(std::string&& right_side);
     bool operator>(BigInteger& right_side);
     bool operator>(BigInteger&& right_side);
+
+    bool operator<=(const char* right_side);
+    bool operator<=(long long int right_side);
+    bool operator<=(std::string& right_side);
+    bool operator<=(std::string&& right_side);
     bool operator<=(BigInteger& right_side);
     bool operator<=(BigInteger&& right_side);
+
+    bool operator>=(const char* right_side);
+    bool operator>=(long long int right_side);
+    bool operator>=(std::string& right_side);
+    bool operator>=(std::string&& right_side);
     bool operator>=(BigInteger& right_side);
     bool operator>=(BigInteger&& right_side);
     

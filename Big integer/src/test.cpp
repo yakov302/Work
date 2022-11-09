@@ -115,8 +115,12 @@ long long int generate_modulo(long long max_value)
 
 bool add(long long int a, long long int b)
 {
-    BigInteger result = BigInteger(a) + BigInteger(b);
-    if(result.convert_big_int_to_long_long() == a+b)
+    BigInteger A(a);
+    BigInteger B(b);
+    BigInteger result = A + B;
+    if(result.convert_big_int_to_long_long() == a+b
+        && A.convert_big_int_to_long_long() == a
+        && B.convert_big_int_to_long_long() == b)
     {
         std::cout << GREEN;
         std::cout << "PASS!!!\n";
@@ -159,8 +163,12 @@ void add_test()
 
 bool sub(long long int a, long long int b)
 {
-    BigInteger result = BigInteger(a) - BigInteger(b);
-    if(result.convert_big_int_to_long_long() == a-b)
+    BigInteger A(a);
+    BigInteger B(b);
+    BigInteger result = A - B;
+    if(result.convert_big_int_to_long_long() == a-b
+        && A.convert_big_int_to_long_long() == a
+        && B.convert_big_int_to_long_long() == b)
     {
         std::cout << GREEN;
         std::cout << "PASS!!!\n";
@@ -203,8 +211,12 @@ void sub_test()
 
 bool mul(long long int a, long long int b)
 {
-    BigInteger result = BigInteger(a) * BigInteger(b);
-    if(result.convert_big_int_to_long_long() == a*b)
+    BigInteger A(a);
+    BigInteger B(b);
+    BigInteger result = A * B;
+    if(result.convert_big_int_to_long_long() == a*b
+        && A.convert_big_int_to_long_long() == a
+        && B.convert_big_int_to_long_long() == b)
     {
         std::cout << GREEN;
         std::cout << "PASS!!!\n";
@@ -247,8 +259,12 @@ void mul_test()
 
 bool dev(long long int a, long long int b)
 {
-    BigInteger result = BigInteger(a) / BigInteger(b);
-    if(result.convert_big_int_to_long_long() == a/b)
+    BigInteger A(a);
+    BigInteger B(b);
+    BigInteger result = A / B;
+    if(result.convert_big_int_to_long_long() == a/b
+        && A.convert_big_int_to_long_long() == a
+        && B.convert_big_int_to_long_long() == b)
     {
         std::cout << GREEN;
         std::cout << "PASS!!!\n";
@@ -294,8 +310,12 @@ void dev_test()
 
 bool mod(long long int a, long long int b)
 {
-    BigInteger result = BigInteger(a) % BigInteger(b);
-    if(result.convert_big_int_to_long_long() == a%b)
+    BigInteger A(a);
+    BigInteger B(b);
+    BigInteger result = A % B;
+    if(result.convert_big_int_to_long_long() == a%b
+        && A.convert_big_int_to_long_long() == a
+        && B.convert_big_int_to_long_long() == b)
     {
         std::cout << GREEN;
         std::cout << "PASS!!!\n";
@@ -341,8 +361,12 @@ void mod_test()
 
 bool power(long long int a, long long int b)
 {
-    BigInteger result = BigInteger(a) ^ BigInteger(b);
-    if(result.convert_big_int_to_long_long() == (long long int)pow(a, b))
+    BigInteger A(a);
+    BigInteger B(b);
+    BigInteger result = A ^ B;
+    if(result.convert_big_int_to_long_long() == (long long int)pow(a,b)
+        && A.convert_big_int_to_long_long() == a
+        && B.convert_big_int_to_long_long() == b)
     {
         std::cout << GREEN;
         std::cout << "PASS!!!\n";
@@ -386,6 +410,45 @@ void pow_test()
     }
 }
 
+bool root(long long int a)
+{
+    BigInteger A(a);
+    BigInteger result = A.square_root();
+    if(result.convert_big_int_to_long_long() == (long long int)sqrt(a)
+        && A.convert_big_int_to_long_long() == a)
+    {
+        std::cout << GREEN;
+        std::cout << "PASS!!!\n";
+        std::cout << NORMAL;
+        std::cout << "sqort of: " << a << " is: " << result << "\n\n";
+        return true;
+    }
+    else
+    {
+        std::cout << RED;
+        std::cout << "FAIL!!!\n";
+        std::cout << NORMAL;
+        std::cout << "sqort of: " << a << " is: " << result << "\n\n";
+        return false;
+    }
+}
+
+void root_test()
+{
+    std::cout << YELLOW;
+    std::cout << "\n***squrt tests***" << "\n\n";
+    std::cout << NORMAL;
+
+    while(true)
+    {
+        long long int modulo = generate_modulo(MAX_NUM);
+        long long int a = getRandom()%modulo;
+
+        if(!root(a))
+            return;
+    }
+}
+
 int main()
 {
     // contractor_test();
@@ -394,7 +457,8 @@ int main()
     // mul_test();
     // dev_test();
     // mod_test();
-    pow_test();
+    // pow_test();
+    root_test();
     
     return 0;
 }
