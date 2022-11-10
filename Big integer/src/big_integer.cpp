@@ -147,7 +147,7 @@ void delete_zeros_on_left(BigIntList& result)
 	}
 }
 
-int length_comparison(BigIntList& first, BigIntList& second, Compare& compare)
+int length_comparison(BigIntList first, BigIntList second, Compare& compare)
 {
 	delete_zeros_on_left(first);
 	delete_zeros_on_left(second);
