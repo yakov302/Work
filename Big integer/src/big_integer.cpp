@@ -86,12 +86,11 @@ bool is_i_am_zero(BigIntVector& big_int)
 {
 	int count = 0;
 	int len = big_int.size();
-	for(int i = 0; i < len; ++i)
+	for(int i = len - 1; i >= 0; --i)
 	{
-		count += big_int[i];
+		count += (int)big_int[i];
 		if(count != 0)
 			return false;
-		i++;
 	}
 
 	return true;
@@ -137,21 +136,21 @@ int absolute_values_comparison(BigIntVector first, BigIntVector second, Compare&
 	return EQUALS;
 }
 
-// int compare(BigIntList& first, bool& first_sign, BigIntList& second, bool& second_sign)
-// {
-// 	if(first_sign != second_sign)
-// 	{
-// 		if(first_sign == POSITIVE)
-// 			return FIRST;
-// 		else
-// 			return SECOND;
-// 	}
+int compare(BigIntVector& first, bool& first_sign, BigIntVector& second, bool& second_sign)
+{
+	if(first_sign != second_sign)
+	{
+		if(first_sign == POSITIVE)
+			return FIRST;
+		else
+			return SECOND;
+	}
 
-// 	if(first_sign == POSITIVE)
-// 		return absolute_values_comparison(first, second, greater);
-// 	else
-// 		return absolute_values_comparison(first, second, lass);
-// }
+	if(first_sign == POSITIVE)
+		return absolute_values_comparison(first, second, greater);
+	else
+		return absolute_values_comparison(first, second, lass);
+}
 
 
 bool set_first_and_second(BigIntVector& first, bool& first_sign, BigIntVector& second, bool& second_sign, BigIntVector& self, bool& self_sign, BigIntVector& right_side, bool& right_side_sign, int& first_len, int&  second_len)
@@ -223,20 +222,20 @@ void set_sub_sign(bool& result_sign, bool& self_sign, bool& right_side_sign, Big
 	}
 }
 
-// void set_sign(bool& result_sign, bool& self_sign, bool& right_side_sign)
-// {
-// 	if(self_sign != right_side_sign)
-// 		result_sign = NEGATIVE;
-// 	else
-// 		result_sign = POSITIVE;
-// }
+void set_mul_sign(bool& result_sign, bool& self_sign, bool& right_side_sign)
+{
+	if(self_sign != right_side_sign)
+		result_sign = NEGATIVE;
+	else
+		result_sign = POSITIVE;
+}
 
-// void set_dev_sign(bool& result_sign, bool& self_sign, bool& right_side_sign)
-// {
-// 	set_sign(result_sign, self_sign, right_side_sign);
-// 	right_side_sign = POSITIVE;
-// 	self_sign = POSITIVE;
-// }
+void set_dev_sign(bool& result_sign, bool& self_sign, bool& right_side_sign)
+{
+	set_mul_sign(result_sign, self_sign, right_side_sign);
+	right_side_sign = POSITIVE;
+	self_sign = POSITIVE;
+}
 
 // void set_mod_sign(bool& self_sign, bool& right_side_sign)
 // {
@@ -244,11 +243,11 @@ void set_sub_sign(bool& result_sign, bool& self_sign, bool& right_side_sign, Big
 // 	right_side_sign = POSITIVE;
 // }
 
-// void set_sign_back(bool& self, bool& right_side, bool self_sign, bool right_side_sign)
-// {
-// 	self = self_sign;
-// 	right_side = right_side_sign;
-// }
+void set_sign_back(bool& self, bool& right_side, bool self_sign, bool right_side_sign)
+{
+	self = self_sign;
+	right_side = right_side_sign;
+}
 
 // void set_mod_sign_back(bool& self, bool& right_side, bool& result, bool self_sign, bool right_side_sign)
 // {
@@ -264,25 +263,25 @@ void flip_sign(bool& big_int_sign)
 		big_int_sign = NEGATIVE;
 }
 
-// void zeros_padding(BigIntList& big_int, int padding_index)
-// {
-// 	for(int i = 0; i < padding_index; ++i)
-// 		big_int.push_front(0);
-// }
+void zeros_padding(BigIntVector& big_int, int& padding_index)
+{
+	for(int i = 0; i < padding_index; ++i)
+		big_int.push_back(0);
+}
 
-// void close_mul_iteration(BigInt& temp, BigIntList& temp_list, BigInt& result, BigIntIterator& second, int& carry, int& padding_index)
-// {
-// 	if (carry != 0)
-// 	{
-// 		temp_list.push_front(carry);
-// 		carry = 0;
-// 	}
+void close_mul_iteration(BigInt& temp, BigIntVector& temp_vector, BigInt& result, int& second_i, int& carry, int& padding_index)
+{
+	if (carry != 0)
+	{
+		temp_vector.push_back(carry);
+		carry = 0;
+	}
 
-// 	result = result + temp;
-// 	temp_list.clear();
-// 	padding_index += 1;
-// 	second--;
-// }
+	result = result + temp;
+	temp_vector.clear();
+	padding_index += 1;
+	second_i++;
+}
 
 BigInt make_sub(BigInt& self, bool& self_sign, BigInt& right_side)
 {
@@ -302,39 +301,38 @@ BigInt make_add(BigInt& self, bool& self_sign, BigInt& right_side)
 	return result;
 }
 
-// bool one_of_them_is_zero(BigIntList& self, BigIntList& right_side)
-// {
-// 	if(is_i_am_zero(self) || is_i_am_zero(right_side))
-// 		return true;
+bool one_of_them_is_zero(BigIntVector& self, BigIntVector& right_side)
+{
+	if(is_i_am_zero(self) || is_i_am_zero(right_side))
+		return true;
 
-// 	return false;
-// }
+	return false;
+}
 
-// bool special_cases(BigIntList& self, bool& self_sign, BigIntList& right_side, bool& right_side_sign, BigInt& result)
-// {
-// 	BigIntList zero;
-// 	zero.push_back(0);
+bool dev_special_cases(BigIntVector& self, bool& self_sign, BigIntVector& right_side, bool& right_side_sign, BigInt& result)
+{
+	if(is_i_am_zero(right_side))
+		throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
 
-// 	if(absolute_values_comparison(zero, right_side, greater) == EQUALS)
-// 		throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
+	int resoult = absolute_values_comparison(self, right_side, greater);
 
-// 	if(absolute_values_comparison(self, right_side, greater) == SECOND)
-// 	{
-// 		result = BigInt("0");
-// 		return true;
-// 	}
+	if(resoult == SECOND)
+	{
+		result = BigInt("0");
+		return true;
+	}
 
-// 	if(absolute_values_comparison(self, right_side, greater) == EQUALS)
-// 	{
-// 		if(self_sign == right_side_sign)
-// 			result = BigInt("1");
-// 		else
-// 			result = BigInt("-1");
-// 		return true;
-// 	}
+	if(resoult == EQUALS)
+	{
+		if(self_sign == right_side_sign)
+			result = BigInt("1");
+		else
+			result = BigInt("-1");
+		return true;
+	}
 		
-// 	return false;
-// }
+	return false;
+}
 
 // bool special_cases(BigInt& self, BigInt& right_side, BigInt& result)
 // {
@@ -405,32 +403,41 @@ BigInt make_add(BigInt& self, bool& self_sign, BigInt& right_side)
 // 	return false;
 // }
 
-// bool divide_temp_self_by_right_side(BigInt& temp_self, BigInt& right_side, BigInt& temp_result, bool first_iteration)
-// {
-// 	if(right_side > temp_self && first_iteration)
-// 		return false;
+bool divide_temp_self_by_right_side(BigInt& temp_self, BigInt& right_side, BigInt& temp_result, BigInt& temp_result_mul_right_side, bool first_iteration)
+{
+	if(right_side > temp_self && first_iteration)
+		return false;
 
-// 	BigInt counter("0");
-// 	BigInt temp_right_side;
+	temp_result = "0";
+	temp_result_mul_right_side = "0";
+	while(true)
+	{
+		temp_result_mul_right_side = temp_result_mul_right_side + right_side;
+		if(temp_result_mul_right_side > temp_self)
+			break;
+		else
+			temp_result = temp_result + 1;
+	}
 
-// 	while(true)
-// 	{
-// 		temp_right_side = temp_right_side + right_side;
-// 		if(temp_right_side > temp_self)
-// 			break;
-// 		else
-// 			counter = counter + 1;
-// 	}
+	temp_result_mul_right_side = temp_result_mul_right_side - right_side;
+	return true;
+}
 
-// 	temp_result = counter;
-// 	return true;
-// }
+void push_front(BigIntVector& big_int, int digit)
+{
+	int len = big_int.size();
+	big_int.push_back(0);
+	for(int i = len - 1; i >= 0; --i)
+		big_int[i+1] = big_int[i];
+	 
+	big_int[0] = digit;
+}
 
-// void concatenate(BigIntList& result, BigIntList& temp_result)
-// {
-// 	for(auto digit : temp_result)
-// 		result.push_back(digit);
-// }
+void concatenate(BigIntVector& result, BigIntVector& temp_result)
+{
+	for(auto digit : temp_result)
+		push_front(result, digit);
+}
 
 // bool is_i_am_root(BigInt& root, BigInt& number, BigInt& upper, BigInt& lower)
 // {
@@ -661,123 +668,140 @@ BigInt BigInt::operator-(std::string&& right_side)
 	return *this - BigInt(right_side);
 }
 
-// BigInt BigInt::operator*(BigInt& right_side)
-// {
-// 	if(impl::one_of_them_is_zero(this->m_big_int, right_side.m_big_int))
-// 		return BigInt("0");
+BigInt BigInt::operator*(BigInt& right_side)
+{
+	if(impl::one_of_them_is_zero(this->digits, right_side.digits))
+		return BigInt("0");
 
-// 	int carry = 0;
-// 	int padding_index = 0;
-// 	BigInt temp;
-// 	BigInt result("0");
-// 	auto first_end = this->m_big_int.end();
-// 	auto second_end = right_side.m_big_int.end();
-// 	auto second = impl::init_iterator(right_side.m_big_int);
+	int carry = 0;
+	int second_i = 0;
+	int padding_index = 0;
+	int first_len = this->digits.size();
+	int second_len = right_side.digits.size();
 
-// 	while (second != second_end)
-// 	{
-// 		impl::zeros_padding(temp.m_big_int, padding_index);
-// 		auto first = impl::init_iterator(this->m_big_int);
+	BigInt temp;
+	BigInt result;
+	temp.reserve(first_len + 1);
+	result.reserve(first_len + second_len);
+	
 
-// 		while(first != first_end)
-// 		{
-// 			temp.m_big_int.push_front(impl::enter((*second) * (*first) + carry));
-// 			carry = impl::remainder((*second) * (*first) + carry);
-// 			first--;
-// 		}
+	while (second_i < second_len)
+	{
+		int first_i = 0;
+		impl::zeros_padding(temp.digits, padding_index);
 
-// 		impl::close_mul_iteration(temp, temp.m_big_int, result, second, carry, padding_index);
-// 	}
+		while(first_i < first_len)
+		{
+			int current_digits_mul = this->digits[first_i]*right_side.digits[second_i] + carry;
+			temp.digits.push_back(current_digits_mul%10);
+			carry = current_digits_mul/10;
+			first_i++;
+		}
 
-// 	impl::set_sign(result.m_sign, this->m_sign, right_side.m_sign);
-// 	return result;
-// }
+		impl::close_mul_iteration(temp, temp.digits, result, second_i, carry, padding_index);
+	}
 
-// BigInt BigInt::operator*(BigInt&& right_side)
-// {
-// 	return *this * right_side;
-// }
+	impl::set_mul_sign(result.sign, this->sign, right_side.sign);
+	return result;
+}
 
-// BigInt BigInt::operator*(const char* right_side)
-// {
-// 	return *this * BigInt(right_side);
-// }
+BigInt BigInt::operator*(BigInt&& right_side)
+{
+	return (*this) * right_side;
+}
 
-// BigInt BigInt::operator*(long long int right_side)
-// {
-// 	return *this * BigInt(right_side);
-// }
+BigInt BigInt::operator*(const char* right_side)
+{
+	return (*this) * BigInt(right_side);
+}
 
-// BigInt BigInt::operator*(std::string& right_side)
-// {
-// 	return *this * BigInt(right_side);
-// }
+BigInt BigInt::operator*(long long int right_side)
+{
+	return (*this)* BigInt(right_side);
+}
 
-// BigInt BigInt::operator*(std::string&& right_side)
-// {
-// 	return *this * BigInt(right_side);
-// }
+BigInt BigInt::operator*(std::string& right_side)
+{
+	return (*this) * BigInt(right_side);
+}
 
-// BigInt BigInt::operator/(BigInt& right_side)
-// {
-// 	BigInt result;
-// 	if(impl::special_cases(this->m_big_int, this->m_sign, right_side.m_big_int, right_side.m_sign, result))
-// 		return result;
+BigInt BigInt::operator*(std::string&& right_side)
+{
+	return (*this) * BigInt(right_side);
+}
 
-// 	BigInt temp_self;
-// 	BigInt temp_result;
-// 	BigInt temp_result_mul_right_side;
-// 	auto it = this->m_big_int.begin();
-// 	auto end = this->m_big_int.end();
-// 	bool first_iteration = true;
-// 	bool self_sign = this->m_sign;
-// 	bool right_side_sign = right_side.m_sign;
-// 	impl::set_dev_sign(result.m_sign, this->m_sign, right_side.m_sign);
+void push_front(BigIntVector& big_int, int digit)
+{
+	int len = big_int.size();
+	big_int.push_back(0);
+	for(int i = len - 1; i >= 0; --i)
+		big_int[i+1] = big_int[i];
+	 
+	big_int[0] = digit;
+}
 
-// 	while(it != end)
-// 	{
-// 		temp_self.m_big_int.push_back((*it));
-// 		impl::delete_zeros_on_left(temp_self.m_big_int);
+BigInt BigInt::operator/(BigInt& right_side)
+{
+	BigInt result;
+	if(impl::dev_special_cases(this->digits, this->sign, right_side.digits, right_side.sign, result))
+		return result;
 
-// 		if(impl::divide_temp_self_by_right_side(temp_self, right_side, temp_result, first_iteration))
-// 		{
-// 			first_iteration = false;
-// 			impl::concatenate(result.m_big_int, temp_result.m_big_int);
-// 			temp_result_mul_right_side = temp_result * right_side;
-// 			temp_self = temp_self - temp_result_mul_right_side;
-// 		}
+	int first_len = this->digits.size();
+	int first_i = first_len - 1;
+	bool first_iteration = true;
+	bool self_sign = this->sign;
+	bool right_side_sign = right_side.sign;
 
-// 		++it;
-// 	}
+	BigInt temp_self; 
+	BigInt temp_result;
+	BigInt temp_result_mul_right_side;
+	temp_self.reserve(first_len);
+	temp_result.reserve(first_len);
+	temp_result_mul_right_side.reserve(first_len);
 
-// 	impl::set_sign_back(this->m_sign, right_side.m_sign, self_sign, right_side_sign);
-// 	return result;
-// }
+	impl::set_dev_sign(result.sign, this->sign, right_side.sign);
 
-// BigInt BigInt::operator/(BigInt&& right_side)
-// {
-// 	return *this / right_side;
-// }
+	while(first_i >= 0)
+	{
+		impl::push_front(temp_self.digits, this->digits[first_i]);
+		if(impl::divide_temp_self_by_right_side(temp_self, right_side, temp_result, temp_result_mul_right_side, first_iteration))
+		{
+			first_iteration = false;
+			impl::concatenate(result.digits, temp_result.digits);
+			temp_self = temp_self - temp_result_mul_right_side;
+		}
 
-// BigInt BigInt::operator/(const char* right_side)
-// {
-// 	return *this / BigInt(right_side);
-// }
+		--first_i;
+	}
 
-// BigInt BigInt::operator/(long long int right_side)
-// {
-// 	return *this / BigInt(right_side);
-// }
+	impl::set_sign_back(this->sign, right_side.sign, self_sign, right_side_sign);
+	return result;
+}
 
-// BigInt BigInt::operator/(std::string& right_side)
-// {
-// 	return *this / BigInt(right_side);
-// }
+BigInt BigInt::operator/(BigInt&& right_side)
+{
+	return *this / right_side;
+}
 
-// BigInt BigInt::operator/(std::string&& right_side)
-// {
-// 	return *this / BigInt(right_side);
-// }
+BigInt BigInt::operator/(const char* right_side)
+{
+	return *this / BigInt(right_side);
+}
+
+BigInt BigInt::operator/(long long int right_side)
+{
+	return *this / BigInt(right_side);
+}
+
+BigInt BigInt::operator/(std::string& right_side)
+{
+	return *this / BigInt(right_side);
+}
+
+BigInt BigInt::operator/(std::string&& right_side)
+{
+	return *this / BigInt(right_side);
+}
 
 // BigInt BigInt::operator%(BigInt& right_side)
 // {
@@ -1090,194 +1114,194 @@ BigInt BigInt::operator-(std::string&& right_side)
 // 	return *this ^= BigInt(right_side);
 // }
 
-// bool BigInt::operator==(BigInt& right_side)
-// {
-// 	if(impl::compare(this->m_big_int, this->m_sign, right_side.m_big_int, right_side.m_sign) != EQUALS)
-// 		return false;
+bool BigInt::operator==(BigInt& right_side)
+{
+	if(impl::compare(this->digits, this->sign, right_side.digits, right_side.sign) != EQUALS)
+		return false;
 
-// 	return true;
-// }
+	return true;
+}
 
-// bool BigInt::operator==(BigInt&& right_side)
-// {
-// 	return *this == right_side;
-// }
+bool BigInt::operator==(BigInt&& right_side)
+{
+	return *this == right_side;
+}
 
-// bool BigInt::operator==(const char* right_side)
-// {
-// 	return *this == BigInt(right_side);
-// }
+bool BigInt::operator==(const char* right_side)
+{
+	return *this == BigInt(right_side);
+}
 
-// bool BigInt::operator==(long long int right_side)
-// {
-// 	return *this == BigInt(right_side);
-// }
+bool BigInt::operator==(long long int right_side)
+{
+	return *this == BigInt(right_side);
+}
 
-// bool BigInt::operator==(std::string& right_side)
-// {
-// 	return *this == BigInt(right_side);
-// }
+bool BigInt::operator==(std::string& right_side)
+{
+	return *this == BigInt(right_side);
+}
 
-// bool BigInt::operator==(std::string&& right_side)
-// {
-// 	return *this == BigInt(right_side);
-// }
+bool BigInt::operator==(std::string&& right_side)
+{
+	return *this == BigInt(right_side);
+}
 
-// bool BigInt::operator!=(BigInt& right_side)
-// {
-// 	return !(*this == right_side);
-// }
+bool BigInt::operator!=(BigInt& right_side)
+{
+	return !(*this == right_side);
+}
 
-// bool BigInt::operator!=(BigInt&& right_side)
-// {
-// 	return *this != right_side;
-// }
+bool BigInt::operator!=(BigInt&& right_side)
+{
+	return *this != right_side;
+}
 
-// bool BigInt::operator!=(const char* right_side)
-// {
-// 	return *this != BigInt(right_side);
-// }
+bool BigInt::operator!=(const char* right_side)
+{
+	return *this != BigInt(right_side);
+}
 
-// bool BigInt::operator!=(long long int right_side)
-// {
-// 	return *this != BigInt(right_side);
-// }
+bool BigInt::operator!=(long long int right_side)
+{
+	return *this != BigInt(right_side);
+}
 
-// bool BigInt::operator!=(std::string& right_side)
-// {
-// 	return *this != BigInt(right_side);
-// }
+bool BigInt::operator!=(std::string& right_side)
+{
+	return *this != BigInt(right_side);
+}
 
-// bool BigInt::operator!=(std::string&& right_side)
-// {
-// 	return *this != BigInt(right_side);
-// }
+bool BigInt::operator!=(std::string&& right_side)
+{
+	return *this != BigInt(right_side);
+}
 
-// bool BigInt::operator<(BigInt& right_side)
-// {
-// 	if(impl::compare(this->m_big_int, this->m_sign, right_side.m_big_int, right_side.m_sign) != SECOND)
-// 		return false;
+bool BigInt::operator<(BigInt& right_side)
+{
+	if(impl::compare(this->digits, this->sign, right_side.digits, right_side.sign) != SECOND)
+		return false;
 
-// 	return true;
-// }
+	return true;
+}
 
-// bool BigInt::operator<(BigInt&& right_side)
-// {
-// 	return *this < right_side;
-// }
+bool BigInt::operator<(BigInt&& right_side)
+{
+	return *this < right_side;
+}
 
-// bool BigInt::operator<(const char* right_side)
-// {
-// 	return *this < BigInt(right_side);
-// }
+bool BigInt::operator<(const char* right_side)
+{
+	return *this < BigInt(right_side);
+}
 
-// bool BigInt::operator<(long long int right_side)
-// {
-// 	return *this < BigInt(right_side);
-// }
+bool BigInt::operator<(long long int right_side)
+{
+	return *this < BigInt(right_side);
+}
 
-// bool BigInt::operator<(std::string& right_side)
-// {
-// 	return *this < BigInt(right_side);
-// }
+bool BigInt::operator<(std::string& right_side)
+{
+	return *this < BigInt(right_side);
+}
 
-// bool BigInt::operator<(std::string&& right_side)
-// {
-// 	return *this < BigInt(right_side);
-// }
+bool BigInt::operator<(std::string&& right_side)
+{
+	return *this < BigInt(right_side);
+}
 
-// bool BigInt::operator>(BigInt& right_side)
-// {
-// 	if(impl::compare(this->m_big_int, this->m_sign, right_side.m_big_int, right_side.m_sign) != FIRST)
-// 		return false;
+bool BigInt::operator>(BigInt& right_side)
+{
+	if(impl::compare(this->digits, this->sign, right_side.digits, right_side.sign) != FIRST)
+		return false;
 
-// 	return true;
-// }
+	return true;
+}
 
-// bool BigInt::operator>(BigInt&& right_side)
-// {
-// 	return *this > right_side;
-// }
+bool BigInt::operator>(BigInt&& right_side)
+{
+	return *this > right_side;
+}
 
-// bool BigInt::operator>(const char* right_side)
-// {
-// 	return *this > BigInt(right_side);
-// }
+bool BigInt::operator>(const char* right_side)
+{
+	return *this > BigInt(right_side);
+}
 
-// bool BigInt::operator>(long long int right_side)
-// {
-// 	return *this > BigInt(right_side);
-// }
+bool BigInt::operator>(long long int right_side)
+{
+	return *this > BigInt(right_side);
+}
 
-// bool BigInt::operator>(std::string& right_side)
-// {
-// 	return *this > BigInt(right_side);
-// }
+bool BigInt::operator>(std::string& right_side)
+{
+	return *this > BigInt(right_side);
+}
 
-// bool BigInt::operator>(std::string&& right_side)
-// {
-// 	return *this > BigInt(right_side);
-// }
+bool BigInt::operator>(std::string&& right_side)
+{
+	return *this > BigInt(right_side);
+}
 
-// bool BigInt::operator<=(BigInt& right_side)
-// {
-// 	return (*this < right_side || *this == right_side);
-// }
+bool BigInt::operator<=(BigInt& right_side)
+{
+	return (*this < right_side || *this == right_side);
+}
 
-// bool BigInt::operator<=(BigInt&& right_side)
-// {
-// 	return *this <= right_side;
-// }
+bool BigInt::operator<=(BigInt&& right_side)
+{
+	return *this <= right_side;
+}
 
-// bool BigInt::operator<=(const char* right_side)
-// {
-// 	return *this <= BigInt(right_side);
-// }
+bool BigInt::operator<=(const char* right_side)
+{
+	return *this <= BigInt(right_side);
+}
 
-// bool BigInt::operator<=(long long int right_side)
-// {
-// 	return *this <= BigInt(right_side);
-// }
+bool BigInt::operator<=(long long int right_side)
+{
+	return *this <= BigInt(right_side);
+}
 
-// bool BigInt::operator<=(std::string& right_side)
-// {
-// 	return *this <= BigInt(right_side);
-// }
+bool BigInt::operator<=(std::string& right_side)
+{
+	return *this <= BigInt(right_side);
+}
 
-// bool BigInt::operator<=(std::string&& right_side)
-// {
-// 	return *this <= BigInt(right_side);
-// }
+bool BigInt::operator<=(std::string&& right_side)
+{
+	return *this <= BigInt(right_side);
+}
 
-// bool BigInt::operator>=(BigInt& right_side)
-// {
-// 	return (*this > right_side || *this == right_side);
-// }
+bool BigInt::operator>=(BigInt& right_side)
+{
+	return (*this > right_side || *this == right_side);
+}
 
-// bool BigInt::operator>=(BigInt&& right_side)
-// {
-// 	return *this >= right_side;
-// }
+bool BigInt::operator>=(BigInt&& right_side)
+{
+	return *this >= right_side;
+}
 
-// bool BigInt::operator>=(const char* right_side)
-// {
-// 	return *this >= BigInt(right_side);
-// }
+bool BigInt::operator>=(const char* right_side)
+{
+	return *this >= BigInt(right_side);
+}
 
-// bool BigInt::operator>=(long long int right_side)
-// {
-// 	return *this >= BigInt(right_side);
-// }
+bool BigInt::operator>=(long long int right_side)
+{
+	return *this >= BigInt(right_side);
+}
 
-// bool BigInt::operator>=(std::string& right_side)
-// {
-// 	return *this >= BigInt(right_side);
-// }
+bool BigInt::operator>=(std::string& right_side)
+{
+	return *this >= BigInt(right_side);
+}
 
-// bool BigInt::operator>=(std::string&& right_side)
-// {
-// 	return *this >= BigInt(right_side);
-// }
+bool BigInt::operator>=(std::string&& right_side)
+{
+	return *this >= BigInt(right_side);
+}
 
 std::ostream& operator<<(std::ostream& a_os, BigInt const& big_int)
 {

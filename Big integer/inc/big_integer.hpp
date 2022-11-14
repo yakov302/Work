@@ -54,19 +54,19 @@ public:
     BigInt operator-(BigInt& right_side);
     BigInt operator-(BigInt&& right_side);
 
-    // BigInt operator*(const char* right_side);
-    // BigInt operator*(long long int right_side);
-    // BigInt operator*(std::string& right_side);
-    // BigInt operator*(std::string&& right_side);
-    // BigInt operator*(BigInt& right_side);
-    // BigInt operator*(BigInt&& right_side);
+    BigInt operator*(const char* right_side);
+    BigInt operator*(long long int right_side);
+    BigInt operator*(std::string& right_side);
+    BigInt operator*(std::string&& right_side);
+    BigInt operator*(BigInt& right_side);
+    BigInt operator*(BigInt&& right_side);
 
-    // BigInt operator/(const char* right_side);
-    // BigInt operator/(long long int right_side);
-    // BigInt operator/(std::string& right_side);
-    // BigInt operator/(std::string&& right_side);
-    // BigInt operator/(BigInt& right_side);
-    // BigInt operator/(BigInt&& right_side);
+    BigInt operator/(const char* right_side);
+    BigInt operator/(long long int right_side);
+    BigInt operator/(std::string& right_side);
+    BigInt operator/(std::string&& right_side);
+    BigInt operator/(BigInt& right_side);
+    BigInt operator/(BigInt&& right_side);
 
     // BigInt operator%(const char* right_side);
     // BigInt operator%(long long int right_side);
@@ -131,47 +131,47 @@ public:
     // BigInt operator^=(BigInt& right_side);
     // BigInt operator^=(BigInt&& right_side);
 
-    // bool operator==(const char* right_side);
-    // bool operator==(long long int right_side);
-    // bool operator==(std::string& right_side);
-    // bool operator==(std::string&& right_side);
-    // bool operator==(BigInt& right_side);
-    // bool operator==(BigInt&& right_side);
+    bool operator==(const char* right_side);
+    bool operator==(long long int right_side);
+    bool operator==(std::string& right_side);
+    bool operator==(std::string&& right_side);
+    bool operator==(BigInt& right_side);
+    bool operator==(BigInt&& right_side);
 
-    // bool operator!=(const char* right_side);
-    // bool operator!=(long long int right_side);
-    // bool operator!=(std::string& right_side);
-    // bool operator!=(std::string&& right_side);
-    // bool operator!=(BigInt& right_side);
-    // bool operator!=(BigInt&& right_side);
+    bool operator!=(const char* right_side);
+    bool operator!=(long long int right_side);
+    bool operator!=(std::string& right_side);
+    bool operator!=(std::string&& right_side);
+    bool operator!=(BigInt& right_side);
+    bool operator!=(BigInt&& right_side);
 
-    // bool operator<(const char* right_side);
-    // bool operator<(long long int right_side);
-    // bool operator<(std::string& right_side);
-    // bool operator<(std::string&& right_side);
-    // bool operator<(BigInt& right_side);
-    // bool operator<(BigInt&& right_side);
+    bool operator<(const char* right_side);
+    bool operator<(long long int right_side);
+    bool operator<(std::string& right_side);
+    bool operator<(std::string&& right_side);
+    bool operator<(BigInt& right_side);
+    bool operator<(BigInt&& right_side);
 
-    // bool operator>(const char* right_side);
-    // bool operator>(long long int right_side);
-    // bool operator>(std::string& right_side);
-    // bool operator>(std::string&& right_side);
-    // bool operator>(BigInt& right_side);
-    // bool operator>(BigInt&& right_side);
+    bool operator>(const char* right_side);
+    bool operator>(long long int right_side);
+    bool operator>(std::string& right_side);
+    bool operator>(std::string&& right_side);
+    bool operator>(BigInt& right_side);
+    bool operator>(BigInt&& right_side);
 
-    // bool operator<=(const char* right_side);
-    // bool operator<=(long long int right_side);
-    // bool operator<=(std::string& right_side);
-    // bool operator<=(std::string&& right_side);
-    // bool operator<=(BigInt& right_side);
-    // bool operator<=(BigInt&& right_side);
+    bool operator<=(const char* right_side);
+    bool operator<=(long long int right_side);
+    bool operator<=(std::string& right_side);
+    bool operator<=(std::string&& right_side);
+    bool operator<=(BigInt& right_side);
+    bool operator<=(BigInt&& right_side);
 
-    // bool operator>=(const char* right_side);
-    // bool operator>=(long long int right_side);
-    // bool operator>=(std::string& right_side);
-    // bool operator>=(std::string&& right_side);
-    // bool operator>=(BigInt& right_side);
-    // bool operator>=(BigInt&& right_side);
+    bool operator>=(const char* right_side);
+    bool operator>=(long long int right_side);
+    bool operator>=(std::string& right_side);
+    bool operator>=(std::string&& right_side);
+    bool operator>=(BigInt& right_side);
+    bool operator>=(BigInt&& right_side);
     
     bool& my_sign();
     size_t num_of_digits()const;
