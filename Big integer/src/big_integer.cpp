@@ -73,14 +73,31 @@ void check_tail_add(BigIntVector& result, BigIntVector& big_int, int& index, int
 	}
 }
 
-void check_tail_sub(BigIntVector& first, int& first_i, int& first_len, BigIntVector& result)
+int sub_iteration_calculation(int first_digits, int second_digits, int& carry)
+{
+	int current_digits_sub = first_digits - second_digits - carry;
+	if(current_digits_sub < 0)
+	{
+		carry = 1;
+		current_digits_sub += 10;
+		return current_digits_sub;
+	}
+
+	carry = 0;
+	return current_digits_sub;
+}
+
+
+void check_tail_sub(BigIntVector& first, int& first_i, int& first_len, BigIntVector& result, int& carry)
 {
 	while (first_i < first_len)
 	{
-		result.push_back(first[first_i]);
+		int current_digits_sub = sub_iteration_calculation(first[first_i], 0, carry);
+		result.push_back(current_digits_sub);
 		first_i++;
 	}
 }
+
 
 bool is_i_am_zero(BigIntVector& big_int)
 {
@@ -182,24 +199,6 @@ bool set_first_and_second(BigIntVector& first, bool& first_sign, BigIntVector& s
 	}
 
 	return true;
-}
-
-void lend(BigIntVector& first, int first_i, BigIntVector& second, int second_i)
-{
-	if (first[first_i] - second[second_i] >= 0)
-		return;
-
-	first[first_i] += 10;
-	first_i++;
-
-	int first_len = first.size();
-	while((first[first_i] == 0) && (first_i < first_len))
-	{
-		first[first_i] = 9;
-		first_i++;
-	}
-
-	first[first_i] -= 1;
 }
 
 void set_sub_sign(bool& result_sign, bool& self_sign, bool& right_side_sign, BigIntVector& self, BigIntVector& right_side)
@@ -611,33 +610,42 @@ BigInt BigInt::operator+(std::string&& right_side)
 	return *this + BigInt(right_side);
 }
 
+void BigInt::sub(BigInt& first, BigInt& second, BigInt& result)
+{
+	int carry = 0;
+	int first_i = 0;
+	int second_i = 0;
+	int first_len = first.num_of_digits();
+	int second_len = second.num_of_digits();
+	result.reserve(first_len);
+
+	while (first_i < first_len && second_i < second_len)
+	{
+		int current_digits_sub = impl::sub_iteration_calculation(first.digits[first_i], second.digits[second_i], carry);
+		result.digits.push_back(current_digits_sub);
+		first_i++;
+		second_i++;
+	}
+
+	impl::check_tail_sub(first.digits, first_i, first_len, result.digits, carry);
+}
+
 BigInt BigInt::operator-(BigInt& right_side)
 {
 	if(this->sign != right_side.sign)
 		return impl::make_add(*this, this->sign, right_side);
 
-	BigInt result;
-	BigInt first;
-	BigInt second;
-	int first_i = 0;
-	int second_i = 0;
-	int first_len;
-	int second_len;
-
-	if(!impl::set_first_and_second(first.digits, first.sign, second.digits, second.sign, this->digits, this->sign, right_side.digits, right_side.sign, first_len, second_len))
+	int compar_result = impl::absolute_values_comparison(this->digits, right_side.digits, greater);
+	if(compar_result == EQUALS)
 		return BigInt("0");
 
-	result.digits.reserve(first_len);
+	BigInt result;
+	if(compar_result == FIRST)
+		sub(*this, right_side, result);
 
-	while (first_i < first_len && second_i < second_len)
-	{
-		impl::lend(first.digits, first_i, second.digits, second_i);
-		result.digits.push_back(first.digits[first_i] - second.digits[second_i]);
-		first_i++;
-		second_i++;
-	}
+	if(compar_result == SECOND)
+		sub(right_side, *this, result);
 
-	impl::check_tail_sub(first.digits, first_i, first_len, result.digits);
 	impl::set_sub_sign(result.sign,  this->sign, right_side.sign, this->digits, right_side.digits);
 	impl::delete_zeros_on_left(result.digits);
 	return result;
@@ -728,16 +736,6 @@ BigInt BigInt::operator*(std::string& right_side)
 BigInt BigInt::operator*(std::string&& right_side)
 {
 	return (*this) * BigInt(right_side);
-}
-
-void push_front(BigIntVector& big_int, int digit)
-{
-	int len = big_int.size();
-	big_int.push_back(0);
-	for(int i = len - 1; i >= 0; --i)
-		big_int[i+1] = big_int[i];
-	 
-	big_int[0] = digit;
 }
 
 BigInt BigInt::operator/(BigInt& right_side)

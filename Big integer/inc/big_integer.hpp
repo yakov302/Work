@@ -181,6 +181,9 @@ public:
     long long int convert_big_int_to_long_long(); // Warning!!! use only for numbers smaller than sizeof(long long int)
 
 private:
+    void sub(BigInt& first, BigInt& second, BigInt& result);
+
+private:
     bool sign;
     BigIntVector digits;
 };
