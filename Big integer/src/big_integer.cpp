@@ -3,8 +3,8 @@
 namespace big_integer
 {
 
-Compare lass([](int first, int second){return first < second;});
-Compare greater([](int first, int second){return first > second;});
+Compare less([](int first, int second){return (first < second);});
+Compare greater([](int first, int second){return (first > second);});
 
 namespace impl
 {
@@ -40,7 +40,6 @@ void convet_int_to_list_of_digit(BigIntVector& digits, long long int number)
 		number = (number - digit) / 10;
 		digits.push_back(digit);
 	}
-
 }
 
 void convert_string_to_list_of_digit(BigIntVector& big_int, std::string const& number)
@@ -87,7 +86,6 @@ int sub_iteration_calculation(int first_digits, int second_digits, int& carry)
 	return current_digits_sub;
 }
 
-
 void check_tail_sub(BigIntVector& first, int& first_i, int& first_len, BigIntVector& result, int& carry)
 {
 	while (first_i < first_len)
@@ -97,7 +95,6 @@ void check_tail_sub(BigIntVector& first, int& first_i, int& first_len, BigIntVec
 		first_i++;
 	}
 }
-
 
 bool is_i_am_zero(BigIntVector& big_int)
 {
@@ -166,9 +163,8 @@ int compare(BigIntVector& first, bool& first_sign, BigIntVector& second, bool& s
 	if(first_sign == POSITIVE)
 		return absolute_values_comparison(first, second, greater);
 	else
-		return absolute_values_comparison(first, second, lass);
+		return absolute_values_comparison(first, second, less);
 }
-
 
 bool set_first_and_second(BigIntVector& first, bool& first_sign, BigIntVector& second, bool& second_sign, BigIntVector& self, bool& self_sign, BigIntVector& right_side, bool& right_side_sign, int& first_len, int&  second_len)
 {
@@ -236,11 +232,11 @@ void set_dev_sign(bool& result_sign, bool& self_sign, bool& right_side_sign)
 	self_sign = POSITIVE;
 }
 
-// void set_mod_sign(bool& self_sign, bool& right_side_sign)
-// {
-// 	self_sign = POSITIVE;
-// 	right_side_sign = POSITIVE;
-// }
+void set_mod_sign(bool& self_sign, bool& right_side_sign)
+{
+	self_sign = POSITIVE;
+	right_side_sign = POSITIVE;
+}
 
 void set_sign_back(bool& self, bool& right_side, bool self_sign, bool right_side_sign)
 {
@@ -248,11 +244,11 @@ void set_sign_back(bool& self, bool& right_side, bool self_sign, bool right_side
 	right_side = right_side_sign;
 }
 
-// void set_mod_sign_back(bool& self, bool& right_side, bool& result, bool self_sign, bool right_side_sign)
-// {
-// 	set_sign_back(self, right_side, self_sign, right_side_sign);
-// 	result = self_sign;
-// }
+void set_mod_sign_back(bool& self, bool& right_side, bool& result, bool self_sign, bool right_side_sign)
+{
+	set_sign_back(self, right_side, self_sign, right_side_sign);
+	result = self_sign;
+}
 
 void flip_sign(bool& big_int_sign)
 {
@@ -333,74 +329,74 @@ bool dev_special_cases(BigIntVector& self, bool& self_sign, BigIntVector& right_
 	return false;
 }
 
-// bool special_cases(BigInt& self, BigInt& right_side, BigInt& result)
-// {
-// 	if(right_side  ==  BigInt("0"))
-// 		throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
+bool special_cases_mod(BigInt& self, BigInt& right_side, BigInt& result)
+{
+	if(right_side  ==  BigInt("0"))
+		throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
 
-// 	if(self < right_side)
-// 	{
-// 		result = self;
-// 		return true;
-// 	}
+	if(self < right_side)
+	{
+		result = self;
+		return true;
+	}
 
-// 	if(self == right_side)
-// 	{
-// 		result = BigInt("0");
-// 		return true;
-// 	}
+	if(self == right_side)
+	{
+		result = BigInt("0");
+		return true;
+	}
 
-// 	return false;
-// }
+	return false;
+}
 
-// bool special_cases_pow(bool right_side_sign, BigInt& result, BigInt& self, BigInt& right_side)
-// {
-// 	if(self == BigInt("1"))
-// 	{
-// 		result = BigInt("1");
-// 		return true;
-// 	}
+bool special_cases_pow(bool right_side_sign, BigInt& result, BigInt& self, BigInt& right_side)
+{
+	if(self == BigInt("1"))
+	{
+		result = BigInt("1");
+		return true;
+	}
 
-// 	if(self == BigInt("-1"))
-// 	{
-// 		result = BigInt("-1");
-// 		return true;
-// 	}
+	if(self == BigInt("-1"))
+	{
+		result = BigInt("-1");
+		return true;
+	}
 
-// 	if(right_side_sign == NEGATIVE)
-// 	{
-// 		if(self == BigInt("0"))
-// 			throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
+	if(right_side_sign == NEGATIVE)
+	{
+		if(self == BigInt("0"))
+			throw std::runtime_error(std::string("ERROR: invalid division by zero!"));
 		
-// 		result = BigInt("0");
-// 		return true;
-// 	}
+		result = BigInt("0");
+		return true;
+	}
 	
-// 	if(right_side == BigInt("0"))
-// 	{
-// 		result = BigInt("1");
-// 		return true;
-// 	}
+	if(right_side == BigInt("0"))
+	{
+		result = BigInt("1");
+		return true;
+	}
 	
-// 	if(right_side == BigInt("1"))
-// 	{
-// 		result = self;
-// 		return true;
-// 	}
+	if(right_side == BigInt("1"))
+	{
+		result = self;
+		return true;
+	}
 
-// 	return false;
-// }
+	return false;
+}
 
-// bool special_cases(BigInt& self)
-// {
-// 	if(self < BigInt("0"))
-// 		throw std::runtime_error(std::string("ERROR: invalid negative number!"));
+bool special_cases_root(BigInt& self)
+{
+	if(self < BigInt("0"))
+		throw std::runtime_error(std::string("ERROR: invalid negative number!"));
 
-// 	if(self == BigInt("0") || self == BigInt("1"))
-// 		return true;
+	if(self == BigInt("0") || self == BigInt("1"))
+		return true;
 	
-// 	return false;
-// }
+	return false;
+}
 
 bool divide_temp_self_by_right_side(BigInt& temp_self, BigInt& right_side, BigInt& temp_result, BigInt& temp_result_mul_right_side, bool first_iteration)
 {
@@ -438,22 +434,23 @@ void concatenate(BigIntVector& result, BigIntVector& temp_result)
 		push_front(result, digit);
 }
 
-// bool is_i_am_root(BigInt& root, BigInt& number, BigInt& upper, BigInt& lower)
-// {
-// 	if((root^BigInt(2)) > number)
-// 	{
-// 		upper = root;
-// 		return false;
-// 	}
+bool is_i_am_root(BigInt& root, BigInt& number, BigInt& upper, BigInt& lower)
+{
+	BigInt root_pow_2 = root*root;
+	if(root_pow_2 > number)
+	{
+		upper = root;
+		return false;
+	}
 
-// 	if((root^BigInt(2)) < number)
-// 	{
-// 		lower = root;
-// 		return false;
-// 	}
+	if(root_pow_2 < number)
+	{
+		lower = root;
+		return false;
+	}
 
-// 	return true;
-// }
+	return true;
+}
 
 
 }// impl namespace
@@ -801,316 +798,316 @@ BigInt BigInt::operator/(std::string&& right_side)
 	return *this / BigInt(right_side);
 }
 
-// BigInt BigInt::operator%(BigInt& right_side)
-// {
-// 	BigInt result;
-// 	bool self_sign = this->m_sign;
-// 	bool right_side_sign = right_side.m_sign;
-// 	impl::set_mod_sign(this->m_sign, right_side.m_sign);
-// 	if(impl::special_cases(*this, right_side, result))
-// 	{
-// 		impl::set_mod_sign_back(this->m_sign, right_side.m_sign, result.m_sign, self_sign, right_side_sign);
-// 		return result;
-// 	}		
+BigInt BigInt::operator%(BigInt& right_side)
+{
+	BigInt result;
+	bool self_sign = this->sign;
+	bool right_side_sign = right_side.sign;
+	impl::set_mod_sign(this->sign, right_side.sign);
+	if(impl::special_cases_mod(*this, right_side, result))
+	{
+		impl::set_mod_sign_back(this->sign, right_side.sign, result.sign, self_sign, right_side_sign);
+		return result;
+	}		
 
-// 	BigInt dev = *this/right_side;
-// 	result = (*this) - (dev*right_side);
+	BigInt dev = *this/right_side;
+	result = (*this) - (dev*right_side);
 
-// 	impl::set_mod_sign_back(this->m_sign, right_side.m_sign, result.m_sign, self_sign, right_side_sign);
-// 	return result;
-// }
+	impl::set_mod_sign_back(this->sign, right_side.sign, result.sign, self_sign, right_side_sign);
+	return result;
+}
 
-// BigInt BigInt::operator%(BigInt&& right_side)
-// {
-// 	return *this % right_side;
-// }
+BigInt BigInt::operator%(BigInt&& right_side)
+{
+	return *this % right_side;
+}
 
-// BigInt BigInt::operator%(const char* right_side)
-// {
-// 	return *this % BigInt(right_side);
-// }
+BigInt BigInt::operator%(const char* right_side)
+{
+	return *this % BigInt(right_side);
+}
 
-// BigInt BigInt::operator%(long long int right_side)
-// {
-// 	return *this % BigInt(right_side);
-// }
+BigInt BigInt::operator%(long long int right_side)
+{
+	return *this % BigInt(right_side);
+}
 
-// BigInt BigInt::operator%(std::string& right_side)
-// {
-// 	return *this % BigInt(right_side);
-// }
+BigInt BigInt::operator%(std::string& right_side)
+{
+	return *this % BigInt(right_side);
+}
 
-// BigInt BigInt::operator%(std::string&& right_side)
-// {
-// 	return *this % BigInt(right_side);
-// }
+BigInt BigInt::operator%(std::string&& right_side)
+{
+	return *this % BigInt(right_side);
+}
 
-// BigInt BigInt::operator^(BigInt& right_side)
-// {
-// 	BigInt result(1);
-// 	if(impl::special_cases_pow(right_side.m_sign, result, *this, right_side))
-// 		return result;
+BigInt BigInt::operator^(BigInt& right_side)
+{
+	BigInt result(1);
+	if(impl::special_cases_pow(right_side.sign, result, *this, right_side))
+		return result;
 
-// 	BigInt counter("0");
-// 	while(counter < right_side)
-// 	{
-// 		result = result * (*this);
-// 		counter = counter + 1;
-// 	}
+	BigInt counter("0");
+	while(counter < right_side)
+	{
+		result = result * (*this);
+		counter = counter + 1;
+	}
 
-// 	return result;
-// }
+	return result;
+}
 
-// BigInt BigInt::operator^(BigInt&& right_side)
-// {
-// 	return *this ^ right_side;
-// }
+BigInt BigInt::operator^(BigInt&& right_side)
+{
+	return *this ^ right_side;
+}
 
-// BigInt BigInt::operator^(const char* right_side)
-// {
-// 	return *this ^ BigInt(right_side);
-// }
+BigInt BigInt::operator^(const char* right_side)
+{
+	return *this ^ BigInt(right_side);
+}
 
-// BigInt BigInt::operator^(long long int right_side)
-// {
-// 	return *this ^ BigInt(right_side);
-// }
+BigInt BigInt::operator^(long long int right_side)
+{
+	return *this ^ BigInt(right_side);
+}
 
-// BigInt BigInt::operator^(std::string& right_side)
-// {
-// 	return *this ^ BigInt(right_side);
-// }
+BigInt BigInt::operator^(std::string& right_side)
+{
+	return *this ^ BigInt(right_side);
+}
 
-// BigInt BigInt::operator^(std::string&& right_side)
-// {
-// 	return *this ^ BigInt(right_side);
-// }
+BigInt BigInt::operator^(std::string&& right_side)
+{
+	return *this ^ BigInt(right_side);
+}
 
-// BigInt BigInt::square_root()
-// {
-// 	if(impl::special_cases(*this))
-// 		return *this;
+BigInt BigInt::square_root()
+{
+	if(impl::special_cases_root(*this))
+		return *this;
 
-//     BigInt lower("1");
-//     BigInt upper = *this;
-// 	BigInt root = *this/2;
+    BigInt lower("1");
+    BigInt upper = *this;
+	BigInt root = *this/2;
 
-// 	while((upper - lower) > "1")
-// 	{
-// 		if(impl::is_i_am_root(root, *this, upper, lower))
-// 			break;
+	while(upper > (lower + 1))
+	{
+		if(impl::is_i_am_root(root, *this, upper, lower))
+			break;
 
-// 		root = lower + ((upper - lower)/BigInt(2));
-// 	}
+		root = lower + ((upper - lower)/BigInt(2));
+	}
 
-// 	return root;
-// }
+	return root;
+}
 
-// BigInt BigInt::operator++()
-// {
-// 	*this = *this + 1;
-// 	return *this;
-// }
+BigInt BigInt::operator++()
+{
+	*this = *this + 1;
+	return *this;
+}
 
-// BigInt BigInt::operator++(int)
-// {
-// 	BigInt pre = *this;
-// 	*this = *this + 1;
-// 	return pre;
-// }
+BigInt BigInt::operator++(int)
+{
+	BigInt pre = *this;
+	*this = *this + 1;
+	return pre;
+}
 
-// BigInt BigInt::operator--()
-// {
-// 	*this = *this - 1;
-// 	return *this;
-// }
+BigInt BigInt::operator--()
+{
+	*this = *this - 1;
+	return *this;
+}
 
-// BigInt BigInt::operator--(int)
-// {
-// 	BigInt pre = *this;
-// 	*this = *this - 1;
-// 	return pre;
-// }
+BigInt BigInt::operator--(int)
+{
+	BigInt pre = *this;
+	*this = *this - 1;
+	return pre;
+}
 
-// BigInt BigInt::operator+=(BigInt& right_side)
-// {
-// 	return *this = *this + right_side;
-// }
+BigInt BigInt::operator+=(BigInt& right_side)
+{
+	return *this = *this + right_side;
+}
 
-// BigInt BigInt::operator+=(BigInt&& right_side)
-// {
-// 	return *this += right_side;
-// }
+BigInt BigInt::operator+=(BigInt&& right_side)
+{
+	return *this += right_side;
+}
 
-// BigInt BigInt::operator+=(const char* right_side)
-// {
-// 	return *this += BigInt(right_side);
-// }
+BigInt BigInt::operator+=(const char* right_side)
+{
+	return *this += BigInt(right_side);
+}
 
-// BigInt BigInt::operator+=(long long int right_side)
-// {
-// 	return *this += BigInt(right_side);
-// }
+BigInt BigInt::operator+=(long long int right_side)
+{
+	return *this += BigInt(right_side);
+}
 
-// BigInt BigInt::operator+=(std::string& right_side)
-// {
-// 	return *this += BigInt(right_side);
-// }
+BigInt BigInt::operator+=(std::string& right_side)
+{
+	return *this += BigInt(right_side);
+}
 
-// BigInt BigInt::operator+=(std::string&& right_side)
-// {
-// 	return *this += BigInt(right_side);
-// }
+BigInt BigInt::operator+=(std::string&& right_side)
+{
+	return *this += BigInt(right_side);
+}
 
-// BigInt BigInt::operator-=(BigInt& right_side)
-// {
-// 	return *this = *this - right_side;
-// }
+BigInt BigInt::operator-=(BigInt& right_side)
+{
+	return *this = *this - right_side;
+}
 
-// BigInt BigInt::operator-=(BigInt&& right_side)
-// {
-// 	return *this -= right_side;
-// }
+BigInt BigInt::operator-=(BigInt&& right_side)
+{
+	return *this -= right_side;
+}
 
-// BigInt BigInt::operator-=(const char* right_side)
-// {
-// 	return *this -= BigInt(right_side);
-// }
+BigInt BigInt::operator-=(const char* right_side)
+{
+	return *this -= BigInt(right_side);
+}
 
-// BigInt BigInt::operator-=(long long int right_side)
-// {
-// 	return *this -= BigInt(right_side);
-// }
+BigInt BigInt::operator-=(long long int right_side)
+{
+	return *this -= BigInt(right_side);
+}
 
-// BigInt BigInt::operator-=(std::string& right_side)
-// {
-// 	return *this -= BigInt(right_side);
-// }
+BigInt BigInt::operator-=(std::string& right_side)
+{
+	return *this -= BigInt(right_side);
+}
 
-// BigInt BigInt::operator-=(std::string&& right_side)
-// {
-// 	return *this -= BigInt(right_side);
-// }
+BigInt BigInt::operator-=(std::string&& right_side)
+{
+	return *this -= BigInt(right_side);
+}
 
-// BigInt BigInt::operator*=(BigInt& right_side)
-// {
-// 	return *this = (*this) * right_side;
-// }
+BigInt BigInt::operator*=(BigInt& right_side)
+{
+	return *this = (*this) * right_side;
+}
 
-// BigInt BigInt::operator*=(BigInt&& right_side)
-// {
-// 	return *this *= right_side;
-// }
+BigInt BigInt::operator*=(BigInt&& right_side)
+{
+	return *this *= right_side;
+}
 
-// BigInt BigInt::operator*=(const char* right_side)
-// {
-// 	return *this *= BigInt(right_side);
-// }
+BigInt BigInt::operator*=(const char* right_side)
+{
+	return *this *= BigInt(right_side);
+}
 
-// BigInt BigInt::operator*=(long long int right_side)
-// {
-// 	return *this *= BigInt(right_side);
-// }
+BigInt BigInt::operator*=(long long int right_side)
+{
+	return *this *= BigInt(right_side);
+}
 
-// BigInt BigInt::operator*=(std::string& right_side)
-// {
-// 	return *this *= BigInt(right_side);
-// }
+BigInt BigInt::operator*=(std::string& right_side)
+{
+	return *this *= BigInt(right_side);
+}
 
-// BigInt BigInt::operator*=(std::string&& right_side)
-// {
-// 	return *this *= BigInt(right_side);
-// }
+BigInt BigInt::operator*=(std::string&& right_side)
+{
+	return *this *= BigInt(right_side);
+}
 
-// BigInt BigInt::operator/=(BigInt& right_side)
-// {
-// 	return *this = (*this) / right_side;
-// }
+BigInt BigInt::operator/=(BigInt& right_side)
+{
+	return *this = (*this) / right_side;
+}
 
-// BigInt BigInt::operator/=(BigInt&& right_side)
-// {
-// 	return *this /= right_side;
-// }
+BigInt BigInt::operator/=(BigInt&& right_side)
+{
+	return *this /= right_side;
+}
 
-// BigInt BigInt::operator/=(const char* right_side)
-// {
-// 	return *this /= BigInt(right_side);
-// }
+BigInt BigInt::operator/=(const char* right_side)
+{
+	return *this /= BigInt(right_side);
+}
 
-// BigInt BigInt::operator/=(long long int right_side)
-// {
-// 	return *this /= BigInt(right_side);
-// }
+BigInt BigInt::operator/=(long long int right_side)
+{
+	return *this /= BigInt(right_side);
+}
 
-// BigInt BigInt::operator/=(std::string& right_side)
-// {
-// 	return *this /= BigInt(right_side);
-// }
+BigInt BigInt::operator/=(std::string& right_side)
+{
+	return *this /= BigInt(right_side);
+}
 
-// BigInt BigInt::operator/=(std::string&& right_side)
-// {
-// 	return *this /= BigInt(right_side);
-// }
+BigInt BigInt::operator/=(std::string&& right_side)
+{
+	return *this /= BigInt(right_side);
+}
 
-// BigInt BigInt::operator%=(BigInt& right_side)
-// {
-// 	return *this = (*this) % right_side;
-// }
+BigInt BigInt::operator%=(BigInt& right_side)
+{
+	return *this = (*this) % right_side;
+}
 
-// BigInt BigInt::operator%=(BigInt&& right_side)
-// {
-// 	return *this %= right_side;
-// }
+BigInt BigInt::operator%=(BigInt&& right_side)
+{
+	return *this %= right_side;
+}
 
-// BigInt BigInt::operator%=(const char* right_side)
-// {
-// 	return *this %= BigInt(right_side);
-// }
+BigInt BigInt::operator%=(const char* right_side)
+{
+	return *this %= BigInt(right_side);
+}
 
-// BigInt BigInt::operator%=(long long int right_side)
-// {
-// 	return *this %= BigInt(right_side);
-// }
+BigInt BigInt::operator%=(long long int right_side)
+{
+	return *this %= BigInt(right_side);
+}
 
-// BigInt BigInt::operator%=(std::string& right_side)
-// {
-// 	return *this %= BigInt(right_side);
-// }
+BigInt BigInt::operator%=(std::string& right_side)
+{
+	return *this %= BigInt(right_side);
+}
 
-// BigInt BigInt::operator%=(std::string&& right_side)
-// {
-// 	return *this %= BigInt(right_side);
-// }
+BigInt BigInt::operator%=(std::string&& right_side)
+{
+	return *this %= BigInt(right_side);
+}
 
-// BigInt BigInt::operator^=(BigInt& right_side)
-// {
-// 	return *this = (*this) ^ right_side;
-// }
+BigInt BigInt::operator^=(BigInt& right_side)
+{
+	return *this = (*this) ^ right_side;
+}
 
-// BigInt BigInt::operator^=(BigInt&& right_side)
-// {
-// 	return *this ^= right_side;
-// }
+BigInt BigInt::operator^=(BigInt&& right_side)
+{
+	return *this ^= right_side;
+}
 
-// BigInt BigInt::operator^=(const char* right_side)
-// {
-// 	return *this ^= BigInt(right_side);
-// }
+BigInt BigInt::operator^=(const char* right_side)
+{
+	return *this ^= BigInt(right_side);
+}
 
-// BigInt BigInt::operator^=(long long int right_side)
-// {
-// 	return *this ^= BigInt(right_side);
-// }
+BigInt BigInt::operator^=(long long int right_side)
+{
+	return *this ^= BigInt(right_side);
+}
 
-// BigInt BigInt::operator^=(std::string& right_side)
-// {
-// 	return *this ^= BigInt(right_side);
-// }
+BigInt BigInt::operator^=(std::string& right_side)
+{
+	return *this ^= BigInt(right_side);
+}
 
-// BigInt BigInt::operator^=(std::string&& right_side)
-// {
-// 	return *this ^= BigInt(right_side);
-// }
+BigInt BigInt::operator^=(std::string&& right_side)
+{
+	return *this ^= BigInt(right_side);
+}
 
 bool BigInt::operator==(BigInt& right_side)
 {
@@ -1313,20 +1310,16 @@ std::ostream& operator<<(std::ostream& a_os, BigInt const& big_int)
 	return a_os;
 }
 
-// std::string BigInt::convert_big_int_to_string()
-// {
-// 	std::string string;
-// 	auto it = this->m_big_int.begin();
-// 	auto end = this->m_big_int.end();
-
-// 	while (it != end)
-// 	{
-// 		string.push_back(*it + '0');
-// 		it++;
-// 	}
-
-// 	return string;
-// }
+std::string BigInt::convert_big_int_to_string()
+{
+	std::string string;
+	int len = this->digits.size();
+	string.reserve(len);
+	
+	for(int i = len - 1; i >= 0; --i)
+		string.push_back(this->digits[i] + '0');
+	return string;
+}
 
 long long int BigInt::convert_big_int_to_long_long()
 {

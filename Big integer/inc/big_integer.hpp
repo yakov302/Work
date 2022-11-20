@@ -19,12 +19,12 @@ namespace big_integer
 #define EQUALS 3
 
 using  BigIntVector = std::vector<char>;
-using  Compare = std::function<bool(char, char)>;
+using  Compare = std::function<bool(int, int)>;
 
 class BigInt
 {
 public:
-    BigInt(); // make sure you reserve() enough space.
+    BigInt();
     BigInt(const char* number);
     BigInt(long long int number);
     BigInt(std::string const& number);
@@ -68,68 +68,68 @@ public:
     BigInt operator/(BigInt& right_side);
     BigInt operator/(BigInt&& right_side);
 
-    // BigInt operator%(const char* right_side);
-    // BigInt operator%(long long int right_side);
-    // BigInt operator%(std::string& right_side);
-    // BigInt operator%(std::string&& right_side);
-    // BigInt operator%(BigInt& right_side);
-    // BigInt operator%(BigInt&& right_side);
+    BigInt operator%(const char* right_side);
+    BigInt operator%(long long int right_side);
+    BigInt operator%(std::string& right_side);
+    BigInt operator%(std::string&& right_side);
+    BigInt operator%(BigInt& right_side);
+    BigInt operator%(BigInt&& right_side);
 
-    // BigInt operator^(const char* right_side);
-    // BigInt operator^(long long int right_side);
-    // BigInt operator^(std::string& right_side);
-    // BigInt operator^(std::string&& right_side);
-    // BigInt operator^(BigInt& right_side);  
-    // BigInt operator^(BigInt&& right_side);
+    BigInt operator^(const char* right_side);
+    BigInt operator^(long long int right_side);
+    BigInt operator^(std::string& right_side);
+    BigInt operator^(std::string&& right_side);
+    BigInt operator^(BigInt& right_side);  
+    BigInt operator^(BigInt&& right_side);
 
-    // BigInt square_root();
+    BigInt square_root();
 
-    // BigInt operator++();
-    // BigInt operator--();  
-    // BigInt operator++(int); 
-    // BigInt operator--(int);  
+    BigInt operator++();
+    BigInt operator--();  
+    BigInt operator++(int); 
+    BigInt operator--(int);  
 
-    // BigInt operator+=(const char* right_side);
-    // BigInt operator+=(long long int right_side);
-    // BigInt operator+=(std::string& right_side);
-    // BigInt operator+=(std::string&& right_side);
-    // BigInt operator+=(BigInt& right_side);
-    // BigInt operator+=(BigInt&& right_side);
+    BigInt operator+=(const char* right_side);
+    BigInt operator+=(long long int right_side);
+    BigInt operator+=(std::string& right_side);
+    BigInt operator+=(std::string&& right_side);
+    BigInt operator+=(BigInt& right_side);
+    BigInt operator+=(BigInt&& right_side);
 
-    // BigInt operator-=(const char* right_side);
-    // BigInt operator-=(long long int right_side);
-    // BigInt operator-=(std::string& right_side);
-    // BigInt operator-=(std::string&& right_side);
-    // BigInt operator-=(BigInt& right_side);
-    // BigInt operator-=(BigInt&& right_side);
+    BigInt operator-=(const char* right_side);
+    BigInt operator-=(long long int right_side);
+    BigInt operator-=(std::string& right_side);
+    BigInt operator-=(std::string&& right_side);
+    BigInt operator-=(BigInt& right_side);
+    BigInt operator-=(BigInt&& right_side);
 
-    // BigInt operator*=(const char* right_side);
-    // BigInt operator*=(long long int right_side);
-    // BigInt operator*=(std::string& right_side);
-    // BigInt operator*=(std::string&& right_side);
-    // BigInt operator*=(BigInt& right_side);
-    // BigInt operator*=(BigInt&& right_side);
+    BigInt operator*=(const char* right_side);
+    BigInt operator*=(long long int right_side);
+    BigInt operator*=(std::string& right_side);
+    BigInt operator*=(std::string&& right_side);
+    BigInt operator*=(BigInt& right_side);
+    BigInt operator*=(BigInt&& right_side);
 
-    // BigInt operator/=(const char* right_side);
-    // BigInt operator/=(long long int right_side);
-    // BigInt operator/=(std::string& right_side);
-    // BigInt operator/=(std::string&& right_side);
-    // BigInt operator/=(BigInt& right_side);
-    // BigInt operator/=(BigInt&& right_side);
+    BigInt operator/=(const char* right_side);
+    BigInt operator/=(long long int right_side);
+    BigInt operator/=(std::string& right_side);
+    BigInt operator/=(std::string&& right_side);
+    BigInt operator/=(BigInt& right_side);
+    BigInt operator/=(BigInt&& right_side);
 
-    // BigInt operator%=(const char* right_side);
-    // BigInt operator%=(long long int right_side);
-    // BigInt operator%=(std::string& right_side);
-    // BigInt operator%=(std::string&& right_side);
-    // BigInt operator%=(BigInt& right_side);
-    // BigInt operator%=(BigInt&& right_side);
+    BigInt operator%=(const char* right_side);
+    BigInt operator%=(long long int right_side);
+    BigInt operator%=(std::string& right_side);
+    BigInt operator%=(std::string&& right_side);
+    BigInt operator%=(BigInt& right_side);
+    BigInt operator%=(BigInt&& right_side);
 
-    // BigInt operator^=(const char* right_side);
-    // BigInt operator^=(long long int right_side);
-    // BigInt operator^=(std::string& right_side);
-    // BigInt operator^=(std::string&& right_side);
-    // BigInt operator^=(BigInt& right_side);
-    // BigInt operator^=(BigInt&& right_side);
+    BigInt operator^=(const char* right_side);
+    BigInt operator^=(long long int right_side);
+    BigInt operator^=(std::string& right_side);
+    BigInt operator^=(std::string&& right_side);
+    BigInt operator^=(BigInt& right_side);
+    BigInt operator^=(BigInt&& right_side);
 
     bool operator==(const char* right_side);
     bool operator==(long long int right_side);
@@ -176,7 +176,7 @@ public:
     bool& my_sign();
     size_t num_of_digits()const;
     void reserve(int num_of_digit);
-    //std::string convert_big_int_to_string();
+    std::string convert_big_int_to_string();
     friend std::ostream& operator<<(std::ostream& a_os, BigInt const& big_int);
     long long int convert_big_int_to_long_long(); // Warning!!! use only for numbers smaller than sizeof(long long int)
 
