@@ -174,6 +174,7 @@ public:
     bool operator>=(BigInt&& right_side);
     
     bool& my_sign();
+    bool is_i_am_odd();
     size_t num_of_digits()const;
     void reserve(int num_of_digit);
     std::string convert_big_int_to_string();

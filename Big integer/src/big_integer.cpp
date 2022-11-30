@@ -1344,6 +1344,11 @@ bool& BigInt::my_sign()
 	return this->sign;
 }
 
+bool BigInt::is_i_am_odd()
+{
+	return (this->digits[0]%2) != 0;
+}
+
 size_t BigInt::num_of_digits()const
 {
 	return this->digits.size();
