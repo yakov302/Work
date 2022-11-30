@@ -707,6 +707,7 @@ BigInt BigInt::operator*(BigInt& right_side)
 	}
 
 	impl::set_mul_sign(result.sign, this->sign, right_side.sign);
+	impl::delete_zeros_on_left(result.digits);
 	return result;
 }
 
