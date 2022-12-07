@@ -469,6 +469,7 @@ BigInt::BigInt(long long int number)
 	sign = impl::sign(number);
 	digits.reserve(20);
 	impl::convet_int_to_list_of_digit(digits, number);
+	impl::delete_zeros_on_left(this->digits);
 }
 
 BigInt::BigInt(const char* number)
@@ -479,6 +480,7 @@ BigInt::BigInt(const char* number)
 	int len = strlen(number);
 	digits.reserve(len);
 	impl::convert_chars_to_list_of_digit(digits, number, len);
+	impl::delete_zeros_on_left(this->digits);
 }
 
 BigInt::BigInt(std::string const& number)
@@ -488,6 +490,7 @@ BigInt::BigInt(std::string const& number)
 	sign = impl::sign(number[0]);
 	digits.reserve(number.size());
 	impl::convert_string_to_list_of_digit(digits, number);
+	impl::delete_zeros_on_left(this->digits);
 }
 
 BigInt::BigInt(std::string const&& number)
@@ -497,6 +500,7 @@ BigInt::BigInt(std::string const&& number)
 	sign = impl::sign(number[0]);
 	digits.reserve(number.size());
 	impl::convert_string_to_list_of_digit(digits, number);
+	impl::delete_zeros_on_left(this->digits);
 }
 
 BigInt::BigInt(BigInt const& source)
