@@ -120,6 +120,9 @@ void delete_zeros_on_left(BigIntVector& result)
 		else
 			break;
 	}
+
+	if(result.size() == 0)
+		result.push_back(0);
 }
 
 int absolute_values_comparison(BigIntVector first, BigIntVector second, Compare& compare)
